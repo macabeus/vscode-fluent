@@ -19,7 +19,8 @@
         "id": "fluent",
         "extensions": [
           ".ftl"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
