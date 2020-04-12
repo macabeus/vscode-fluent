@@ -1,9 +1,10 @@
 {
   "name": "vscode-fluent",
-  "displayName": "Language Configuration Sample",
-  "description": "Language Configuration Sample",
+  "displayName": "vscode-fluent",
+  "description": "VS Code extension to work with Fluent, the correct-by-design i10n programming language",
   "version": "0.0.1",
-  "publisher": "vscode-samples",
+  "publisher": "macabeus",
+  "repository": "https://github.com/macabeus/vscode-fluent",
   "scripts": {
     "build": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json"
   },
