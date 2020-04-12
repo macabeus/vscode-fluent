@@ -1,0 +1,36 @@
+{
+  "name": "vscode-fluent",
+  "displayName": "Language Configuration Sample",
+  "description": "Language Configuration Sample",
+  "version": "0.0.1",
+  "publisher": "vscode-samples",
+  "scripts": {
+    "build": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json"
+  },
+  "engines": {
+    "vscode": "^1.28.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "fluent",
+        "extensions": [
+          ".ftl"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "fluent",
+        "scopeName": "source.ftl",
+        "path": "./syntaxes/fluent.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "js-yaml": "3.13.1"
+  }
+}
