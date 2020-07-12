@@ -22,35 +22,14 @@ repository:
     contentName: string.fluent
     patterns:
       - include: "#attributes"
-      - # placeable
-        name: variable.other.placeable.fluent
-        match: "\
-          {\\s*\
-            (\
-              (-|\\$)[a-zA-Z0-9_-]+|\
-              [a-zA-Z][a-zA-Z0-9_-]*|\
-              [0-9]+\
-            )\
-          \\s*}"
+      - include: "#placeable-reference-or-number"
       - include: "#placeable-string"
       - include: "#placeable-function"
       - include: "#selectors"
-      - # invalid placeable - missing } or ->
-        name: invalid.illegal.wrong-placeable-missing-end.fluent
-        match: >-
-          {([^}A-Z]*$|[^-][^>]$)\b
-      - # invalid placeable - string missing end "
-        name: invalid.illegal.wrong-placeable-missing-end-quote.fluent
-        match: >-
-          {\s*"[^"]+$
-      - # invalid placeable - wrong function name
-        name: invalid.illegal.wrong-placeable-name.fluent
-        match: >-
-          {\s*([0-9]\S*\(|[A-Z]*[^A-Z]\S*\()
-      - # invalid placeable - start with number but has letters after
-        name: invalid.illegal.wrong-placeable-number-then-letters.fluent
-        match: >-
-          {\s*[0-9]+[^0-9]+\s*}
+      - include: "#invalid-placeable-wrong-placeable-missing-end"
+      - include: "#invalid-placeable-string-missing-end-quote"
+      - include: "#invalid-placeable-wrong-function-name"
+      - include: "#invalid-placeable-start-with-number-then-has-letters"
 
   attributes:
     begin: >-
@@ -61,21 +40,25 @@ repository:
       1:
         name: storage.type.attribute-begin.fluent
     patterns:
-      - # placeables
-        name: variable.other.placeable.fluent
-        match: >-
-          {\s*(-|\$)[a-zA-Z0-9_-]+\s*}
+      - include: "#placeable-reference-or-number"
       - include: "#placeable-string"
       - include: "#placeable-function"
       - include: "#selectors"
-      - # invalid placeable - missing } or ->
-        name: invalid.illegal.wrong-placeable-missing-end.fluent
-        match: >-
-          {([^}A-Z]*$|[^-][^>]$)\b
-      - # invalid placeable - wrong function name
-        name: invalid.illegal.wrong-placeable-name.fluent
-        match: >-
-          {\s*([0-9]\S*\(|[A-Z]*[^A-Z]\S*\()
+      - include: "#invalid-placeable-wrong-placeable-missing-end"
+      - include: "#invalid-placeable-string-missing-end-quote"
+      - include: "#invalid-placeable-wrong-function-name"
+      - include: "#invalid-placeable-start-with-number-then-has-letters"
+
+  placeable-reference-or-number:
+    name: variable.other.placeable.fluent
+    match: "\
+      {\\s*\
+        (\
+          (-|\\$)[a-zA-Z0-9_-]+|\
+          [a-zA-Z][a-zA-Z0-9_-]*|\
+          [0-9]+\
+        )\
+      \\s*}"
 
   placeable-function:
     begin: >-
@@ -132,3 +115,23 @@ repository:
     match: >-
       .*
     name: invalid.illegal.wrong-line.fluent
+
+  invalid-placeable-wrong-placeable-missing-end:
+    name: invalid.illegal.wrong-placeable-missing-end.fluent
+    match: >-
+      {([^}A-Z]*$|[^-][^>]$)\b
+
+  invalid-placeable-string-missing-end-quote:
+    name: invalid.illegal.wrong-placeable-missing-end-quote.fluent
+    match: >-
+      {\s*"[^"]+$
+
+  invalid-placeable-wrong-function-name:
+    name: invalid.illegal.wrong-placeable-name.fluent
+    match: >-
+      {\s*([0-9]\S*\(|[A-Z]*[^A-Z]\S*\()
+
+  invalid-placeable-start-with-number-then-has-letters:
+    name: invalid.illegal.wrong-placeable-number-then-letters.fluent
+    match: >-
+      {\s*[0-9]+[^0-9]+\s*}
