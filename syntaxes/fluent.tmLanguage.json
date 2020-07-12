@@ -13,8 +13,8 @@
   ],
   "repository": {
     "comment": {
-      "match": "^##?#?\\s.*$",
-      "name": "comment.fluent"
+      "name": "comment.fluent",
+      "match": "^##?#?\\s.*$"
     },
     "message": {
       "begin": "^(-?[a-zA-Z][a-zA-Z0-9_-]*\\s*=\\s*)",
@@ -30,8 +30,8 @@
           "include": "#attributes"
         },
         {
-          "match": "{\\s*((-|\\$)[a-zA-Z0-9_-]+|[a-zA-Z][a-zA-Z0-9_-]*|[0-9]+)\\s*}",
-          "name": "variable.other.placeable.fluent"
+          "name": "variable.other.placeable.fluent",
+          "match": "{\\s*((-|\\$)[a-zA-Z0-9_-]+|[a-zA-Z][a-zA-Z0-9_-]*|[0-9]+)\\s*}"
         },
         {
           "include": "#placeable-string"
@@ -43,20 +43,20 @@
           "include": "#selectors"
         },
         {
-          "match": "{([^}A-Z]*$|[^-][^>]$)\\b",
-          "name": "invalid.illegal.wrong-placeable-missing-end.fluent"
+          "name": "invalid.illegal.wrong-placeable-missing-end.fluent",
+          "match": "{([^}A-Z]*$|[^-][^>]$)\\b"
         },
         {
-          "match": "{\\s*\"[^\"]+$",
-          "name": "invalid.illegal.wrong-placeable-missing-end-quote.fluent"
+          "name": "invalid.illegal.wrong-placeable-missing-end-quote.fluent",
+          "match": "{\\s*\"[^\"]+$"
         },
         {
-          "match": "{\\s*([0-9]\\S*\\(|[A-Z]*[^A-Z]\\S*\\()",
-          "name": "invalid.illegal.wrong-placeable-name.fluent"
+          "name": "invalid.illegal.wrong-placeable-name.fluent",
+          "match": "{\\s*([0-9]\\S*\\(|[A-Z]*[^A-Z]\\S*\\()"
         },
         {
-          "match": "{\\s*[0-9]+[^0-9]+\\s*}",
-          "name": "invalid.illegal.wrong-placeable-number-then-letters.fluent"
+          "name": "invalid.illegal.wrong-placeable-number-then-letters.fluent",
+          "match": "{\\s*[0-9]+[^0-9]+\\s*}"
         }
       ]
     },
@@ -70,8 +70,8 @@
       },
       "patterns": [
         {
-          "match": "{\\s*(-|\\$)[a-zA-Z0-9_-]+\\s*}",
-          "name": "variable.other.placeable.fluent"
+          "name": "variable.other.placeable.fluent",
+          "match": "{\\s*(-|\\$)[a-zA-Z0-9_-]+\\s*}"
         },
         {
           "include": "#placeable-string"
@@ -83,12 +83,12 @@
           "include": "#selectors"
         },
         {
-          "match": "{([^}A-Z]*$|[^-][^>]$)\\b",
-          "name": "invalid.illegal.wrong-placeable-missing-end.fluent"
+          "name": "invalid.illegal.wrong-placeable-missing-end.fluent",
+          "match": "{([^}A-Z]*$|[^-][^>]$)\\b"
         },
         {
-          "match": "{\\s*([0-9]\\S*\\(|[A-Z]*[^A-Z]\\S*\\()",
-          "name": "invalid.illegal.wrong-placeable-name.fluent"
+          "name": "invalid.illegal.wrong-placeable-name.fluent",
+          "match": "{\\s*([0-9]\\S*\\(|[A-Z]*[^A-Z]\\S*\\()"
         }
       ]
     },
