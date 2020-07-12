@@ -152,7 +152,30 @@
           "name": "variable.other.selector-item-begin.fluent"
         }
       },
-      "contentName": "string.selector-item-content.fluent"
+      "contentName": "string.selector-item-content.fluent",
+      "patterns": [
+        {
+          "include": "#placeable-reference-or-number"
+        },
+        {
+          "include": "#placeable-string"
+        },
+        {
+          "include": "#placeable-function"
+        },
+        {
+          "include": "#invalid-placeable-wrong-placeable-missing-end"
+        },
+        {
+          "include": "#invalid-placeable-string-missing-end-quote"
+        },
+        {
+          "include": "#invalid-placeable-wrong-function-name"
+        },
+        {
+          "include": "#invalid-placeable-start-with-number-then-has-letters"
+        }
+      ]
     },
     "wrong-line": {
       "match": ".*",
