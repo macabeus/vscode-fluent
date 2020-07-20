@@ -3,12 +3,15 @@
   "configurations": [
     {
       "name": "Run Extension",
-      "preLaunchTask": "compileYmlToJson",
+      "preLaunchTask": "watch",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/out/**/*.js"
       ]
     }
   ]
