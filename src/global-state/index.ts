@@ -2,6 +2,8 @@ import parser from './parser'
 
 type GlobalState = {
   [ftlPath in string]: {
+    idSpan: { [messageIdentifier in string]: { start: number, end: number } }
+    valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
     hover: { [messageIdentifier in string]: string }
   }
 }
@@ -19,7 +21,13 @@ const updateGlobalState = (params: UpdateGlobalStateParams) => {
   }
 }
 
+const getMessageIdSpan = (path: string, messageIdentifier: string) =>
+  globalState[path].idSpan[messageIdentifier]
+
+const getMessageValueSpan = (path: string, messageIdentifier: string) =>
+  globalState[path].valueSpan[messageIdentifier]
+
 const getMessageHover = (path: string, messageIdentifier: string) =>
   globalState[path].hover[messageIdentifier]
 
-export { updateGlobalState, getMessageHover }
+export { updateGlobalState, getMessageIdSpan, getMessageValueSpan, getMessageHover }

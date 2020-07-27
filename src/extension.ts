@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
-import { updateGlobalState, getMessageHover } from './global-state'
+import { updateGlobalState, getMessageIdSpan, getMessageValueSpan, getMessageHover } from './global-state'
+import { getIdentifierRangeAtPosition } from './utils'
 
 const activate = (_context: vscode.ExtensionContext) => {
   vscode.workspace.textDocuments
@@ -25,9 +26,37 @@ const activate = (_context: vscode.ExtensionContext) => {
     })
   )
 
+  vscode.languages.registerDefinitionProvider('fluent', {
+    provideDefinition(document, position, _cancellationToken) {
+      const originSelectionRange = getIdentifierRangeAtPosition(document, position)
+      const messageIdentifier = document.getText(originSelectionRange)
+
+      const messageIdSpan = getMessageIdSpan(document.fileName, messageIdentifier)
+      const messageIdPosition = document.positionAt(messageIdSpan.start)
+
+      const messageValueSpan = getMessageValueSpan(document.fileName, messageIdentifier)
+      const messageValuePosition = document.positionAt(messageValueSpan.end)
+
+      return [
+        {
+          originSelectionRange,
+          targetUri: vscode.Uri.file(document.fileName),
+          targetRange: new vscode.Range(
+            messageIdPosition,
+            messageValuePosition
+          ),
+          targetSelectionRange: new vscode.Range(
+            messageIdPosition,
+            new vscode.Position(messageIdPosition.line, messageIdentifier.length)
+          ),
+        },
+      ]
+    },
+  })
+
   vscode.languages.registerHoverProvider('fluent', {
     provideHover(document, position, _token) {
-      const messageIdentifier = document.getText(document.getWordRangeAtPosition(position, /[a-zA-Z0-9-]+/))
+      const messageIdentifier = document.getText(getIdentifierRangeAtPosition(document, position))
       const content = getMessageHover(document.fileName, messageIdentifier)
 
       return {

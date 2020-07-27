@@ -9,14 +9,23 @@ import {
 } from '@fluent/syntax'
 
 class VsCodeFluentVisitor extends Visitor {
+  idSpan: { [messageIdentifier in string]: { start: number, end: number } }
+  valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
   hover: { [messageIdentifier in string]: string }
 
   constructor() {
     super()
+    this.idSpan = {}
+    this.valueSpan = {}
     this.hover = {}
   }
 
   visitMessage(node: Message) {
+    if (node.id.span && node.value?.span) {
+      this.idSpan[node.id.name] = { start: node.id.span.start, end: node.id.span.end }
+      this.valueSpan[node.id.name] = { start: node.value.span.start, end: node.value.span.end }
+    }
+
     const hoverValue = node.value?.elements
       .map((element) => {
         if (element.type === 'TextElement') {
@@ -60,7 +69,11 @@ const parser = (source: string) => {
   const visitorMessage = new VsCodeFluentVisitor()
   visitorMessage.visit(ast)
 
-  return { hover: visitorMessage.hover }
+  return {
+    hover: visitorMessage.hover,
+    idSpan: visitorMessage.idSpan,
+    valueSpan: visitorMessage.valueSpan,
+  }
 }
 
 export default parser
