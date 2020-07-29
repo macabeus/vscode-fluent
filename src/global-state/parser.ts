@@ -12,12 +12,14 @@ class VsCodeFluentVisitor extends Visitor {
   idSpan: { [messageIdentifier in string]: { start: number, end: number } }
   valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
   hover: { [messageIdentifier in string]: string }
+  messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
 
   constructor() {
     super()
     this.idSpan = {}
     this.valueSpan = {}
     this.hover = {}
+    this.messageReferenceSpan = {}
   }
 
   visitMessage(node: Message) {
@@ -58,6 +60,18 @@ class VsCodeFluentVisitor extends Visitor {
       })
       .join(' ')
     this.hover[node.id.name] = hoverValue || '[unknown]'
+
+    this.genericVisit(node)
+  }
+
+  visitMessageReference(node: MessageReference) {
+    if (node.span && node.id.span) {
+      if (this.messageReferenceSpan[node.id.name] === undefined) {
+        this.messageReferenceSpan[node.id.name] = []
+      }
+
+      this.messageReferenceSpan[node.id.name].push({ start: node.id.span.start, end: node.id.span.end })
+    }
   }
 }
 
@@ -73,6 +87,7 @@ const parser = (source: string) => {
     hover: visitorMessage.hover,
     idSpan: visitorMessage.idSpan,
     valueSpan: visitorMessage.valueSpan,
+    messageReferenceSpan: visitorMessage.messageReferenceSpan,
   }
 }
 

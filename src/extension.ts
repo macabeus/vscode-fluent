@@ -1,5 +1,11 @@
 import * as vscode from 'vscode'
-import { updateGlobalState, getMessageIdSpan, getMessageValueSpan, getMessageHover } from './global-state'
+import {
+  updateGlobalState,
+  getMessageIdSpan,
+  getMessageValueSpan,
+  getMessageHover,
+  isMessageReference,
+} from './global-state'
 import { getIdentifierRangeAtPosition } from './utils'
 
 const activate = (_context: vscode.ExtensionContext) => {
@@ -31,6 +37,10 @@ const activate = (_context: vscode.ExtensionContext) => {
       const originSelectionRange = getIdentifierRangeAtPosition(document, position)
       const messageIdentifier = document.getText(originSelectionRange)
 
+      if (isMessageReference(document.fileName, messageIdentifier, document.offsetAt(position)) === false) {
+        return
+      }
+
       const messageIdSpan = getMessageIdSpan(document.fileName, messageIdentifier)
       const messageIdPosition = document.positionAt(messageIdSpan.start)
 
@@ -57,6 +67,11 @@ const activate = (_context: vscode.ExtensionContext) => {
   vscode.languages.registerHoverProvider('fluent', {
     provideHover(document, position, _token) {
       const messageIdentifier = document.getText(getIdentifierRangeAtPosition(document, position))
+
+      if (isMessageReference(document.fileName, messageIdentifier, document.offsetAt(position)) === false) {
+        return
+      }
+
       const content = getMessageHover(document.fileName, messageIdentifier)
 
       return {

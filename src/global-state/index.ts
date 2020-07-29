@@ -5,6 +5,7 @@ type GlobalState = {
     idSpan: { [messageIdentifier in string]: { start: number, end: number } }
     valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
     hover: { [messageIdentifier in string]: string }
+    messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
   }
 }
 
@@ -30,4 +31,22 @@ const getMessageValueSpan = (path: string, messageIdentifier: string) =>
 const getMessageHover = (path: string, messageIdentifier: string) =>
   globalState[path].hover[messageIdentifier]
 
-export { updateGlobalState, getMessageIdSpan, getMessageValueSpan, getMessageHover }
+const isMessageReference = (path: string, messageIdentifier: string, position: number) => {
+  const messageSpans = globalState[path].messageReferenceSpan[messageIdentifier]
+  if (messageSpans === undefined) {
+    return false
+  }
+
+  const isInMessageRange = ({ start, end }: { start: number, end: number }) =>
+    ((position >= start) && (position <= end))
+
+  return messageSpans.some(isInMessageRange)
+}
+
+export {
+  updateGlobalState,
+  getMessageIdSpan,
+  getMessageValueSpan,
+  getMessageHover,
+  isMessageReference,
+}
