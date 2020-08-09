@@ -6,6 +6,7 @@ type GlobalState = {
     valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
     hover: { [messageIdentifier in string]: string }
     messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
+    junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
   }
 }
 
@@ -43,10 +44,14 @@ const isMessageReference = (path: string, messageIdentifier: string, position: n
   return messageSpans.some(isInMessageRange)
 }
 
+const getJunksAnnotations = (path: string) =>
+  globalState[path].junksAnnotations
+
 export {
   updateGlobalState,
   getMessageIdSpan,
   getMessageValueSpan,
   getMessageHover,
   isMessageReference,
+  getJunksAnnotations,
 }

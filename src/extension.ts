@@ -7,30 +7,38 @@ import {
   isMessageReference,
 } from './global-state'
 import { getIdentifierRangeAtPosition } from './utils'
+import { updateDiagnosticCollection } from './diagnostic'
 
 const activate = (_context: vscode.ExtensionContext) => {
   vscode.workspace.textDocuments
     .filter(textDocument =>
       textDocument.fileName.endsWith('.ftl'))
-    .forEach(textDocument =>
+    .forEach(textDocument => {
       updateGlobalState({
         type: 'loadFtl',
         payload: { path: textDocument.uri.path, content: textDocument.getText() },
-      }))
+      })
 
-  vscode.workspace.onDidOpenTextDocument(event =>
+      updateDiagnosticCollection(textDocument.uri.path)
+    })
+
+  vscode.workspace.onDidOpenTextDocument(event => {
     updateGlobalState({
       type: 'loadFtl',
       payload: { path: event.uri.path, content: event.getText() },
     })
-  )
 
-  vscode.workspace.onDidChangeTextDocument(event =>
+    updateDiagnosticCollection(event.uri.path)
+  })
+
+  vscode.workspace.onDidChangeTextDocument(event => {
     updateGlobalState({
       type: 'loadFtl',
       payload: { path: event.document.uri.path, content: event.document.getText() },
     })
-  )
+
+    updateDiagnosticCollection(event.document.uri.path)
+  })
 
   vscode.languages.registerDefinitionProvider('fluent', {
     provideDefinition(document, position, _cancellationToken) {

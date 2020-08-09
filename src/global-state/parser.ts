@@ -6,6 +6,7 @@ import {
   MessageReference,
   VariableReference,
   SelectExpression,
+  Junk,
 } from '@fluent/syntax'
 
 class VsCodeFluentVisitor extends Visitor {
@@ -13,6 +14,7 @@ class VsCodeFluentVisitor extends Visitor {
   valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
   hover: { [messageIdentifier in string]: string }
   messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
+  junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
 
   constructor() {
     super()
@@ -20,6 +22,7 @@ class VsCodeFluentVisitor extends Visitor {
     this.valueSpan = {}
     this.hover = {}
     this.messageReferenceSpan = {}
+    this.junksAnnotations = []
   }
 
   visitMessage(node: Message) {
@@ -73,6 +76,21 @@ class VsCodeFluentVisitor extends Visitor {
       this.messageReferenceSpan[node.id.name].push({ start: node.id.span.start, end: node.id.span.end })
     }
   }
+
+  visitJunk(node: Junk) {
+    node.annotations.forEach(annotation => {
+      if (annotation.span === undefined) {
+        return
+      }
+
+      this.junksAnnotations.push({
+        code: annotation.code,
+        message: annotation.message,
+        start: annotation.span.start,
+        end: annotation.span.end,
+      })
+    })
+  }
 }
 
 const fluentParser = new FluentParser()
@@ -88,6 +106,7 @@ const parser = (source: string) => {
     idSpan: visitorMessage.idSpan,
     valueSpan: visitorMessage.valueSpan,
     messageReferenceSpan: visitorMessage.messageReferenceSpan,
+    junksAnnotations: visitorMessage.junksAnnotations,
   }
 }
 
