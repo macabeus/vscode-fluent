@@ -2,17 +2,22 @@
   "name": "vscode-fluent",
   "displayName": "vscode-fluent",
   "description": "VS Code extension to work with Fluent, the correct-by-design i10n programming language",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "macabeus",
   "repository": "https://github.com/macabeus/vscode-fluent",
   "scripts": {
-    "build": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json"
+    "watch": "tsc -watch -p ./",
+    "build-syntaxes": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json"
   },
   "engines": {
     "vscode": "^1.28.0"
   },
   "categories": [
     "Programming Languages"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:fluent"
   ],
   "contributes": {
     "languages": [
@@ -32,7 +37,17 @@
       }
     ]
   },
+  "dependencies": {
+    "@fluent/syntax": "0.16.0",
+    "path": "0.12.7"
+  },
   "devDependencies": {
-    "js-yaml": "3.13.1"
+    "@types/node": "14.0.22",
+    "@types/vscode": "1.47.0",
+    "@typescript-eslint/eslint-plugin": "3.6.1",
+    "@typescript-eslint/parser": "3.6.1",
+    "eslint": "7.5.0",
+    "js-yaml": "3.13.1",
+    "typescript": "3.9.6"
   }
 }

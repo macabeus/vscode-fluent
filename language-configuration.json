@@ -2,6 +2,7 @@
   "comments": {
     "lineComment": "#"
   },
+  "wordPattern": "[a-zA-Z0-9-]+",
   "brackets": [["{", "}"], ["(", ")"]],
   "autoClosingPairs": [
     { "open": "{", "close": "}", "notIn": ["comment"] },

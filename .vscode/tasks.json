@@ -2,9 +2,19 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "compileYmlToJson",
+      "label": "build-syntaxes",
       "type": "npm",
-      "script": "build"
+      "script": "build-syntaxes"
+    },
+    {
+      "label": "watch",
+      "type": "npm",
+      "script": "watch",
+      "problemMatcher": "$tsc-watch",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "never"
+      }
     }
   ]
 }
