@@ -15,20 +15,20 @@ const activate = (_context: vscode.ExtensionContext) => {
     .forEach(textDocument =>
       updateGlobalState({
         type: 'loadFtl',
-        payload: { path: textDocument.fileName, content: textDocument.getText() },
+        payload: { path: textDocument.uri.path, content: textDocument.getText() },
       }))
 
   vscode.workspace.onDidOpenTextDocument(event =>
     updateGlobalState({
       type: 'loadFtl',
-      payload: { path: event.fileName, content: event.getText() },
+      payload: { path: event.uri.path, content: event.getText() },
     })
   )
 
   vscode.workspace.onDidChangeTextDocument(event =>
     updateGlobalState({
       type: 'loadFtl',
-      payload: { path: event.document.fileName, content: event.document.getText() },
+      payload: { path: event.document.uri.path, content: event.document.getText() },
     })
   )
 
@@ -37,20 +37,20 @@ const activate = (_context: vscode.ExtensionContext) => {
       const originSelectionRange = getIdentifierRangeAtPosition(document, position)
       const messageIdentifier = document.getText(originSelectionRange)
 
-      if (isMessageReference(document.fileName, messageIdentifier, document.offsetAt(position)) === false) {
+      if (isMessageReference(document.uri.path, messageIdentifier, document.offsetAt(position)) === false) {
         return
       }
 
-      const messageIdSpan = getMessageIdSpan(document.fileName, messageIdentifier)
+      const messageIdSpan = getMessageIdSpan(document.uri.path, messageIdentifier)
       const messageIdPosition = document.positionAt(messageIdSpan.start)
 
-      const messageValueSpan = getMessageValueSpan(document.fileName, messageIdentifier)
+      const messageValueSpan = getMessageValueSpan(document.uri.path, messageIdentifier)
       const messageValuePosition = document.positionAt(messageValueSpan.end)
 
       return [
         {
           originSelectionRange,
-          targetUri: vscode.Uri.file(document.fileName),
+          targetUri: vscode.Uri.file(document.uri.path),
           targetRange: new vscode.Range(
             messageIdPosition,
             messageValuePosition
@@ -68,11 +68,11 @@ const activate = (_context: vscode.ExtensionContext) => {
     provideHover(document, position, _token) {
       const messageIdentifier = document.getText(getIdentifierRangeAtPosition(document, position))
 
-      if (isMessageReference(document.fileName, messageIdentifier, document.offsetAt(position)) === false) {
+      if (isMessageReference(document.uri.path, messageIdentifier, document.offsetAt(position)) === false) {
         return
       }
 
-      const content = getMessageHover(document.fileName, messageIdentifier)
+      const content = getMessageHover(document.uri.path, messageIdentifier)
 
       return {
         contents: [content],
