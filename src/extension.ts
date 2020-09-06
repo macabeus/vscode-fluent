@@ -3,11 +3,11 @@ import { updateGlobalState } from './global-state'
 import { updateDiagnosticCollection } from './diagnostic'
 import definitionProvider from './providers/definition'
 import hoverProvider from './providers/hover'
+import { fileNameEndsWithFtl } from './utils'
 
 const activate = (_context: vscode.ExtensionContext) => {
   vscode.workspace.textDocuments
-    .filter(textDocument =>
-      textDocument.fileName.endsWith('.ftl'))
+    .filter(fileNameEndsWithFtl)
     .forEach(textDocument => {
       updateGlobalState({
         type: 'loadFtl',
@@ -17,16 +17,24 @@ const activate = (_context: vscode.ExtensionContext) => {
       updateDiagnosticCollection(textDocument.uri.path)
     })
 
-  vscode.workspace.onDidOpenTextDocument(event => {
+  vscode.workspace.onDidOpenTextDocument(textDocument => {
+    if (fileNameEndsWithFtl(textDocument) === false) {
+      return
+    }
+
     updateGlobalState({
       type: 'loadFtl',
-      payload: { path: event.uri.path, content: event.getText() },
+      payload: { path: textDocument.uri.path, content: textDocument.getText() },
     })
 
-    updateDiagnosticCollection(event.uri.path)
+    updateDiagnosticCollection(textDocument.uri.path)
   })
 
   vscode.workspace.onDidChangeTextDocument(event => {
+    if (fileNameEndsWithFtl(event.document) === false) {
+      return
+    }
+
     updateGlobalState({
       type: 'loadFtl',
       payload: { path: event.document.uri.path, content: event.document.getText() },
