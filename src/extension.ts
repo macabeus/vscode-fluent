@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { updateGlobalState } from './global-state'
 import { updateDiagnosticCollection } from './diagnostic'
+import registerCodeActionExtractStringToFluent from './providers/code-action-extract-string-to-fluent'
 import definitionProvider from './providers/definition'
 import hoverProvider from './providers/hover'
 import { fileNameEndsWithFtl } from './utils'
@@ -46,6 +47,7 @@ const activate = (_context: vscode.ExtensionContext) => {
     updateDiagnosticCollection(event.document.uri.path)
   })
 
+  registerCodeActionExtractStringToFluent()
   vscode.languages.registerDefinitionProvider('fluent', definitionProvider)
   vscode.languages.registerHoverProvider('fluent', hoverProvider)
 }

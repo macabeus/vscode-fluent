@@ -16,8 +16,22 @@
 
 - Syntax highlight
 - Show syntax errors
+- Code Action to extract a string to Fluent files
 - Hover support on messages
 - Go to message definition from a reference
+
+## Code Action
+
+### Extract string to FTL
+
+<p align="center">
+  <img height="350px" src="./docs/extract-to-fluent.gif">
+</p>
+
+Using the code action "Extract to Fluent files" you can easly extract a string to from source code to all FTL files on your project.<br />
+To open the code action menu, you should select a string (including its quotes) and then type `⌘ + .` (or `Ctrl + .`).
+
+You can change the replacement template using the configuration `vscodeFluent.replacementTemplate`.
 
 ## How to develop vscode-fluent
 
