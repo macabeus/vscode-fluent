@@ -5,6 +5,7 @@ type GlobalState = {
     idSpan: { [messageIdentifier in string]: { start: number, end: number } }
     valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
     hover: { [messageIdentifier in string]: string }
+    groupComments: Array<{ name: string, start: number, end: number }>
     messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
     junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
   }
@@ -44,6 +45,11 @@ const isMessageReference = (path: string, messageIdentifier: string, position: n
   return messageSpans.some(isInMessageRange)
 }
 
+const getGroupComments = () =>
+  Object
+    .keys(globalState)
+    .map((ftlPath) => ({ path: ftlPath, groupComments: globalState[ftlPath].groupComments }))
+
 const getJunksAnnotations = (path: string) =>
   globalState[path].junksAnnotations
 
@@ -53,5 +59,6 @@ export {
   getMessageValueSpan,
   getMessageHover,
   isMessageReference,
+  getGroupComments,
   getJunksAnnotations,
 }

@@ -17,9 +17,21 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
-    "onLanguage:fluent"
+    "onLanguage:fluent",
+    "onLanguage:javascript",
+    "onLanguage:typescript"
   ],
   "contributes": {
+    "configuration": {
+      "title": "vscode-fluent",
+      "properties": {
+        "vscodeFluent.replacementTemplate": {
+          "type": "string",
+          "default": "t('$1')",
+          "description": "Template used when extracting a string with the code action 'Extract to Fluent files'. Use $1 to get the message id."
+        }
+      }
+    },
     "languages": [
       {
         "id": "fluent",

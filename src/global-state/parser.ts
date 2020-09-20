@@ -3,6 +3,7 @@ import {
   Visitor,
   Message,
   Expression,
+  GroupComment,
   MessageReference,
   VariableReference,
   SelectExpression,
@@ -13,6 +14,7 @@ class VsCodeFluentVisitor extends Visitor {
   idSpan: { [messageIdentifier in string]: { start: number, end: number } }
   valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
   hover: { [messageIdentifier in string]: string }
+  groupComments: Array<{ name: string, start: number, end: number }>
   messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
   junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
 
@@ -21,8 +23,23 @@ class VsCodeFluentVisitor extends Visitor {
     this.idSpan = {}
     this.valueSpan = {}
     this.hover = {}
+    this.groupComments = []
     this.messageReferenceSpan = {}
     this.junksAnnotations = []
+  }
+
+  visitGroupComment(node: GroupComment) {
+    if (node.span === undefined) {
+      return
+    }
+
+    const newGroupComment = {
+      name: node.content,
+      start: node.span.start,
+      end: node.span.end,
+    }
+
+    this.groupComments.push(newGroupComment)
   }
 
   visitMessage(node: Message) {
@@ -105,6 +122,7 @@ const parser = (source: string) => {
     hover: visitorMessage.hover,
     idSpan: visitorMessage.idSpan,
     valueSpan: visitorMessage.valueSpan,
+    groupComments: visitorMessage.groupComments,
     messageReferenceSpan: visitorMessage.messageReferenceSpan,
     junksAnnotations: visitorMessage.junksAnnotations,
   }
