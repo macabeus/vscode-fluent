@@ -6,16 +6,19 @@ import hoverProvider from './providers/hover'
 import { fileNameEndsWithFtl } from './utils'
 
 const activate = (_context: vscode.ExtensionContext) => {
-  vscode.workspace.textDocuments
-    .filter(fileNameEndsWithFtl)
-    .forEach(textDocument => {
-      updateGlobalState({
-        type: 'loadFtl',
-        payload: { path: textDocument.uri.path, content: textDocument.getText() },
-      })
+  vscode.workspace.findFiles('**/*.ftl')
+    .then(uris =>
+      uris.forEach(async (uri) => {
+        const textDocument = await vscode.workspace.openTextDocument(uri)
 
-      updateDiagnosticCollection(textDocument.uri.path)
-    })
+        updateGlobalState({
+          type: 'loadFtl',
+          payload: { path: uri.path, content: textDocument.getText() },
+        })
+
+        updateDiagnosticCollection(uri.path)
+      })
+    )
 
   vscode.workspace.onDidOpenTextDocument(textDocument => {
     if (fileNameEndsWithFtl(textDocument) === false) {
