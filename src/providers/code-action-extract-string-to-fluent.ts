@@ -36,16 +36,16 @@ const codeActionProvider: CodeActionProvider = {
 const commandExtractStringToFluent = {
   name: commandNameExtractStringToFluent,
   handle: async (selectedText: string, originDocument: TextDocument, originRange: Range) => {
-    const addToFluentFiles = async () => {
-      const groupComments = getGroupComments()
+    const groupComments = getGroupComments()
 
+    const askGroupAndId = async () => {
       const groupsNames = new Set(
         groupComments
           .flatMap(ftl => ftl.groupComments.map(group => group.name))
       )
 
-      const selectedName = await window.showQuickPick([...groupsNames])
-      if (selectedName === undefined) {
+      const groupName = await window.showQuickPick([...groupsNames])
+      if (groupName === undefined) {
         return
       }
 
@@ -66,11 +66,15 @@ const commandExtractStringToFluent = {
         return
       }
 
-      groupComments.forEach(async (ftl) => {
-        const selectedGroup = ftl.groupComments.find(group => group.name === selectedName)
+      return { groupName, id }
+    }
+
+    const addToFluentFiles = async (groupName: string) =>
+      Promise.all(groupComments.map(async (ftl) => {
+        const selectedGroup = ftl.groupComments.find(group => group.name === groupName)
 
         if (selectedGroup === undefined) {
-          window.showWarningMessage(`Can't found the message group "${selectedName}" on "${ftl.path}"`)
+          window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftl.path}"`)
           return
         }
 
@@ -86,10 +90,7 @@ const commandExtractStringToFluent = {
         }
 
         textDocument.save()
-      })
-
-      return id
-    }
+      }))
 
     const replaceSelectedString = (id: string) => {
       const template = workspace.getConfiguration('vscodeFluent').get('replacementTemplate') as string
@@ -109,7 +110,13 @@ const commandExtractStringToFluent = {
         })
     }
 
-    const id = await addToFluentFiles()
+    const askResult = await askGroupAndId()
+    if (askResult === undefined) {
+      return
+    }
+
+    const { groupName, id } = askResult
+    await addToFluentFiles(groupName)
     if (id !== undefined) {
       replaceSelectedString(id)
     }
