@@ -45,6 +45,9 @@ const commandExtractStringToFluent = {
       )
 
       const selectedName = await window.showQuickPick([...groupsNames])
+      if (selectedName === undefined) {
+        return
+      }
 
       const idPlaceholder = selectedText
         .replace(/\s/g, '-')
@@ -55,7 +58,10 @@ const commandExtractStringToFluent = {
         placeHolder: idPlaceholder,
       })
 
-      if (id === undefined || id === '') {
+      if (id === undefined) {
+        return
+      }
+      if (id === '') {
         window.showErrorMessage(`Invalid message id "${id}"`)
         return
       }
