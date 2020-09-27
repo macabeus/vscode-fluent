@@ -10,7 +10,7 @@ import {
   workspace,
   WorkspaceEdit,
 } from 'vscode'
-import { getGroupComments } from '../global-state'
+import { getMessageIdSpan, getGroupComments } from '../global-state'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
@@ -69,13 +69,18 @@ const commandExtractStringToFluent = {
       return { groupName, id }
     }
 
-    const addToFluentFiles = async (groupName: string) =>
+    const addToFluentFiles = async (groupName: string, id: string) =>
       Promise.all(groupComments.map(async (ftl) => {
         const selectedGroup = ftl.groupComments.find(group => group.name === groupName)
 
         if (selectedGroup === undefined) {
           window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftl.path}"`)
           return
+        }
+
+        const isNewId = (getMessageIdSpan(ftl.path, id) === undefined)
+        if (isNewId === false) {
+          window.showWarningMessage(`Duplicated id on "${ftl.path}"`)
         }
 
         const textDocument = await workspace.openTextDocument(ftl.path)
@@ -116,7 +121,7 @@ const commandExtractStringToFluent = {
     }
 
     const { groupName, id } = askResult
-    await addToFluentFiles(groupName)
+    await addToFluentFiles(groupName, id)
     if (id !== undefined) {
       replaceSelectedString(id)
     }
