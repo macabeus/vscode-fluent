@@ -14,7 +14,7 @@ import { getGroupComments } from '../global-state'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
-const codeActionProvider = (_language: string): CodeActionProvider => ({
+const codeActionProvider: CodeActionProvider = {
   provideCodeActions: (document, range) => {
     const selectedText = document
       .getText(range)
@@ -31,7 +31,7 @@ const codeActionProvider = (_language: string): CodeActionProvider => ({
 
     return [codeAction]
   },
-})
+}
 
 const commandExtractStringToFluent = {
   name: commandNameExtractStringToFluent,
@@ -111,9 +111,7 @@ const commandExtractStringToFluent = {
 }
 
 const registerCodeActionExtractStringToFluent = () => {
-  ['javascript', 'typescript'].forEach(language =>
-    languages.registerCodeActionsProvider(language, codeActionProvider(language))
-  )
+  languages.registerCodeActionsProvider({ pattern: '**/*[!.ftl]' }, codeActionProvider)
 
   commands.registerCommand(
     commandExtractStringToFluent.name,

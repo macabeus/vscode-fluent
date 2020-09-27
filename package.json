@@ -17,9 +17,7 @@
   ],
   "main": "./out/extension.js",
   "activationEvents": [
-    "onLanguage:fluent",
-    "onLanguage:javascript",
-    "onLanguage:typescript"
+    "*"
   ],
   "contributes": {
     "configuration": {
