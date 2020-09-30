@@ -10,11 +10,11 @@ import {
   workspace,
   WorkspaceEdit,
 } from 'vscode'
-import { getGroupComments } from '../global-state'
+import { getMessageIdSpan, getGroupComments } from '../global-state'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
-const codeActionProvider = (_language: string): CodeActionProvider => ({
+const codeActionProvider: CodeActionProvider = {
   provideCodeActions: (document, range) => {
     const selectedText = document
       .getText(range)
@@ -31,20 +31,23 @@ const codeActionProvider = (_language: string): CodeActionProvider => ({
 
     return [codeAction]
   },
-})
+}
 
 const commandExtractStringToFluent = {
   name: commandNameExtractStringToFluent,
   handle: async (selectedText: string, originDocument: TextDocument, originRange: Range) => {
-    const addToFluentFiles = async () => {
-      const groupComments = getGroupComments()
+    const groupComments = getGroupComments()
 
+    const askGroupAndId = async () => {
       const groupsNames = new Set(
         groupComments
           .flatMap(ftl => ftl.groupComments.map(group => group.name))
       )
 
-      const selectedName = await window.showQuickPick([...groupsNames])
+      const groupName = await window.showQuickPick([...groupsNames])
+      if (groupName === undefined) {
+        return
+      }
 
       const idPlaceholder = selectedText
         .replace(/\s/g, '-')
@@ -55,17 +58,29 @@ const commandExtractStringToFluent = {
         placeHolder: idPlaceholder,
       })
 
-      if (id === undefined || id === '') {
+      if (id === undefined) {
+        return
+      }
+      if (id === '') {
         window.showErrorMessage(`Invalid message id "${id}"`)
         return
       }
 
-      groupComments.forEach(async (ftl) => {
-        const selectedGroup = ftl.groupComments.find(group => group.name === selectedName)
+      return { groupName, id }
+    }
+
+    const addToFluentFiles = async (groupName: string, id: string) =>
+      Promise.all(groupComments.map(async (ftl) => {
+        const selectedGroup = ftl.groupComments.find(group => group.name === groupName)
 
         if (selectedGroup === undefined) {
-          window.showWarningMessage(`Can't found the message group "${selectedName}" on "${ftl.path}"`)
+          window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftl.path}"`)
           return
+        }
+
+        const isNewId = (getMessageIdSpan(ftl.path, id) === undefined)
+        if (isNewId === false) {
+          window.showWarningMessage(`Duplicated id on "${ftl.path}"`)
         }
 
         const textDocument = await workspace.openTextDocument(ftl.path)
@@ -80,10 +95,7 @@ const commandExtractStringToFluent = {
         }
 
         textDocument.save()
-      })
-
-      return id
-    }
+      }))
 
     const replaceSelectedString = (id: string) => {
       const template = workspace.getConfiguration('vscodeFluent').get('replacementTemplate') as string
@@ -103,7 +115,13 @@ const commandExtractStringToFluent = {
         })
     }
 
-    const id = await addToFluentFiles()
+    const askResult = await askGroupAndId()
+    if (askResult === undefined) {
+      return
+    }
+
+    const { groupName, id } = askResult
+    await addToFluentFiles(groupName, id)
     if (id !== undefined) {
       replaceSelectedString(id)
     }
@@ -111,9 +129,7 @@ const commandExtractStringToFluent = {
 }
 
 const registerCodeActionExtractStringToFluent = () => {
-  ['javascript', 'typescript'].forEach(language =>
-    languages.registerCodeActionsProvider(language, codeActionProvider(language))
-  )
+  languages.registerCodeActionsProvider({ pattern: '**/*[!.ftl]' }, codeActionProvider)
 
   commands.registerCommand(
     commandExtractStringToFluent.name,
