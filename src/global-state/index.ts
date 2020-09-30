@@ -1,4 +1,9 @@
+import { workspace } from 'vscode'
 import parser from './parser'
+
+/**
+ * Global to store the state of all FTLs files on the workspace
+ */
 
 type GlobalState = {
   [ftlPath in string]: {
@@ -11,18 +16,62 @@ type GlobalState = {
   }
 }
 
-const initialState = (): GlobalState => ({})
+const initialGlobalState = (): GlobalState => ({})
+const globalState = initialGlobalState()
 
-const globalState = initialState()
+/**
+ * Global to associate a project path to its FTLs
+ */
+
+type ProjectFtls = {
+  isMultipleProjectWorkspace: boolean
+  associations: {
+    [projectPath in string]: string[]
+  }
+}
+
+let globalProjectsFtls: ProjectFtls
+
+const updateGlobalProjectsFtls = async (): Promise<void> => {
+  const projects = workspace.getConfiguration('vscodeFluent').get('projects') as string[]
+  const associationsEntries = await Promise.all(
+    projects.map(async path => [
+      path,
+      await workspace.findFiles(`${path}/**/*.ftl`).then(uris => uris.map(uri => uri.path)),
+    ])
+  )
+
+  globalProjectsFtls = {
+    isMultipleProjectWorkspace: projects.length > 1,
+    associations: Object.fromEntries(associationsEntries),
+  }
+}
+
+updateGlobalProjectsFtls()
+
+/**
+ * Action/Reducers
+ */
 
 type UpdateGlobalStateParams = (
-  { type: 'loadFtl', payload: { path: string, content: string } }
+  { type: 'loadFtl', payload: { path: string, content: string } } |
+  { type: 'updateConfiguration' }
 )
 const updateGlobalState = (params: UpdateGlobalStateParams) => {
   if (params.type === 'loadFtl') {
     globalState[params.payload.path] = parser(params.payload.content)
+    return
+  }
+
+  if (params.type === 'updateConfiguration') {
+    updateGlobalProjectsFtls()
+    return
   }
 }
+
+/**
+ * Helpers
+ */
 
 const getMessageIdSpan = (path: string, messageIdentifier: string) =>
   globalState[path].idSpan[messageIdentifier]
@@ -53,6 +102,26 @@ const getGroupComments = () =>
 const getJunksAnnotations = (path: string) =>
   globalState[path].junksAnnotations
 
+const getAssociatedFluentFilesByFilePath = (path: string) => {
+  if (globalProjectsFtls.isMultipleProjectWorkspace === false) {
+    return Object.keys(globalState)
+  }
+
+  const projectsPath = Object
+    .keys(globalProjectsFtls.associations)
+    .filter(associatePath => path.includes(associatePath))
+
+  if (projectsPath.length === 0) {
+    return { error: `There is no project associated to the path "${path}". Check the config "vscodeFluent.projects"` }
+  }
+
+  if (projectsPath.length > 1) {
+    return { error: `Multiple projects associated to the path "${path}". Check the config "vscodeFluent.projects"` }
+  }
+
+  return globalProjectsFtls.associations[projectsPath[0]]
+}
+
 export {
   updateGlobalState,
   getMessageIdSpan,
@@ -61,4 +130,5 @@ export {
   isMessageReference,
   getGroupComments,
   getJunksAnnotations,
+  getAssociatedFluentFilesByFilePath,
 }

@@ -27,6 +27,11 @@
           "type": "string",
           "default": "t('$1')",
           "description": "Template used when extracting a string with the code action 'Extract to Fluent files'. Use $1 to get the message id."
+        },
+        "vscodeFluent.projects": {
+          "type": "array",
+          "default": [],
+          "description": "If you are working on a workspace with multiple projects, you will need to specify the root of each project so that Fluent files aren't mixed between projects"
         }
       }
     },

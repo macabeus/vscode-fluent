@@ -10,7 +10,11 @@ import {
   workspace,
   WorkspaceEdit,
 } from 'vscode'
-import { getMessageIdSpan, getGroupComments } from '../global-state'
+import {
+  getMessageIdSpan,
+  getGroupComments,
+  getAssociatedFluentFilesByFilePath,
+} from '../global-state'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
@@ -36,7 +40,14 @@ const codeActionProvider: CodeActionProvider = {
 const commandExtractStringToFluent = {
   name: commandNameExtractStringToFluent,
   handle: async (selectedText: string, originDocument: TextDocument, originRange: Range) => {
+    const ftlPaths = getAssociatedFluentFilesByFilePath(originDocument.uri.path)
+    if ('error' in ftlPaths) {
+      window.showErrorMessage(ftlPaths.error)
+      return
+    }
+
     const groupComments = getGroupComments()
+      .filter(groupComment => ftlPaths.some(path => path === groupComment.path))
 
     const askGroupAndId = async () => {
       const groupsNames = new Set(
@@ -70,27 +81,30 @@ const commandExtractStringToFluent = {
     }
 
     const addToFluentFiles = async (groupName: string, id: string) =>
-      Promise.all(groupComments.map(async (ftl) => {
-        const selectedGroup = ftl.groupComments.find(group => group.name === groupName)
+      Promise.all(ftlPaths.map(async (ftlPath) => {
+        const selectedGroup = groupComments
+          .find(groupComment => groupComment.path === ftlPath)
+          ?.groupComments
+          .find(group => group.name === groupName)
 
         if (selectedGroup === undefined) {
-          window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftl.path}"`)
+          window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftlPath}"`)
           return
         }
 
-        const isNewId = (getMessageIdSpan(ftl.path, id) === undefined)
+        const isNewId = (getMessageIdSpan(ftlPath, id) === undefined)
         if (isNewId === false) {
-          window.showWarningMessage(`Duplicated id on "${ftl.path}"`)
+          window.showWarningMessage(`Duplicated id on "${ftlPath}"`)
         }
 
-        const textDocument = await workspace.openTextDocument(ftl.path)
+        const textDocument = await workspace.openTextDocument(ftlPath)
         const position = textDocument.positionAt(selectedGroup.end + 1)
 
         const workspaceEdit = new WorkspaceEdit()
         workspaceEdit.insert(textDocument.uri, position, `\n${id} = ${selectedText}`)
         const applySucces = await workspace.applyEdit(workspaceEdit)
         if (applySucces === false) {
-          window.showErrorMessage(`Error when tried to insert the message on "${ftl.path}"`)
+          window.showErrorMessage(`Error when tried to insert the message on "${ftlPath}"`)
           throw new Error()
         }
 
