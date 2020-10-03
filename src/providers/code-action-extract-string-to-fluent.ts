@@ -55,7 +55,10 @@ const commandExtractStringToFluent = {
           .flatMap(ftl => ftl.groupComments.map(group => group.name))
       )
 
-      const groupName = await window.showQuickPick([...groupsNames])
+      let groupName = await window.showQuickPick(['* Add new group', ...groupsNames])
+      if (groupName === '* Add new group') {
+        groupName = await window.showInputBox()
+      }
       if (groupName === undefined) {
         return
       }
@@ -82,14 +85,26 @@ const commandExtractStringToFluent = {
 
     const addToFluentFiles = async (groupName: string, id: string) =>
       Promise.all(ftlPaths.map(async (ftlPath) => {
-        const selectedGroup = groupComments
+        const textDocument = await workspace.openTextDocument(ftlPath)
+
+        let groupOffsetEnd = groupComments
           .find(groupComment => groupComment.path === ftlPath)
           ?.groupComments
           .find(group => group.name === groupName)
+          ?.end
 
-        if (selectedGroup === undefined) {
-          window.showWarningMessage(`Can't found the message group "${groupName}" on "${ftlPath}"`)
-          return
+        let insertCode = `\n${id} = ${selectedText}`
+
+        if (groupOffsetEnd === undefined) {
+          const positionEndFile = textDocument.lineAt(textDocument.lineCount - 1).range.end
+          groupOffsetEnd = textDocument.offsetAt(positionEndFile)
+
+          const groupSectionCode = (
+            textDocument.getText().length > 0
+              ? `\n## ${groupName}\n`
+              : `## ${groupName}\n`
+          )
+          insertCode = `${groupSectionCode}${insertCode}`
         }
 
         const isNewId = (getMessageIdSpan(ftlPath, id) === undefined)
@@ -97,11 +112,10 @@ const commandExtractStringToFluent = {
           window.showWarningMessage(`Duplicated id on "${ftlPath}"`)
         }
 
-        const textDocument = await workspace.openTextDocument(ftlPath)
-        const position = textDocument.positionAt(selectedGroup.end + 1)
+        const insertPosition = textDocument.positionAt(groupOffsetEnd + 1)
 
         const workspaceEdit = new WorkspaceEdit()
-        workspaceEdit.insert(textDocument.uri, position, `\n${id} = ${selectedText}`)
+        workspaceEdit.insert(textDocument.uri, insertPosition, insertCode)
         const applySucces = await workspace.applyEdit(workspaceEdit)
         if (applySucces === false) {
           window.showErrorMessage(`Error when tried to insert the message on "${ftlPath}"`)
