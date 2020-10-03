@@ -47,6 +47,10 @@ const activate = (_context: vscode.ExtensionContext) => {
     updateDiagnosticCollection(event.document.uri.path)
   })
 
+  vscode.workspace.onDidChangeConfiguration(event => {
+    updateGlobalState({ type: 'updateConfiguration' })
+  })
+
   registerCodeActionExtractStringToFluent()
   vscode.languages.registerDefinitionProvider('fluent', definitionProvider)
   vscode.languages.registerHoverProvider('fluent', hoverProvider)

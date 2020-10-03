@@ -33,6 +33,12 @@ To open the code action menu, you should select a string (including its quotes) 
 
 You can change the replacement template using the configuration `vscodeFluent.replacementTemplate`.
 
+By default, the message will be added to all Fluent files on the workspace. But if you are working on a workspace with multiple projects, and each project has its Fluent files, you won't want mix messages between the projects. To avoid that, you should use the configuration `vscodeFluent.projects`, and add on it each projects's root path. See the bellow image for an instance.
+
+<p align="center">
+  <img src="./docs/config-projects.png">
+</p>
+
 ## How to develop vscode-fluent
 
 ### Syntax
