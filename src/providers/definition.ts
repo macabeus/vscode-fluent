@@ -7,23 +7,26 @@ import {
 import {
   getMessageIdSpan,
   getMessageValueSpan,
-  isMessageReference,
+  getTermSpan,
+  isTermOrMessageReference,
 } from '../global-state'
 import { getIdentifierRangeAtPosition } from '../utils'
 
 const definitionProvider: DefinitionProvider = {
   provideDefinition(document, position) {
     const originSelectionRange = getIdentifierRangeAtPosition(document, position)
-    const messageIdentifier = document.getText(originSelectionRange)
+    const identifier = document.getText(originSelectionRange)
 
-    if (isMessageReference(document.uri.path, messageIdentifier, document.offsetAt(position)) === false) {
+    if (isTermOrMessageReference(document.uri.path, identifier, document.offsetAt(position)) === false) {
       return
     }
 
-    const messageIdSpan = getMessageIdSpan(document.uri.path, messageIdentifier)
-    const messageIdPosition = document.positionAt(messageIdSpan.start)
+    const idSpan = identifier.startsWith('-')
+      ? getTermSpan(document.uri.path, identifier)
+      : getMessageIdSpan(document.uri.path, identifier)
+    const idPosition = document.positionAt(idSpan.start)
 
-    const messageValueSpan = getMessageValueSpan(document.uri.path, messageIdentifier)
+    const messageValueSpan = getMessageValueSpan(document.uri.path, identifier)
     const messageValuePosition = document.positionAt(messageValueSpan.end)
 
     return [
@@ -31,12 +34,12 @@ const definitionProvider: DefinitionProvider = {
         originSelectionRange,
         targetUri: Uri.file(document.uri.path),
         targetRange: new Range(
-          messageIdPosition,
+          idPosition,
           messageValuePosition
         ),
         targetSelectionRange: new Range(
-          messageIdPosition,
-          new Position(messageIdPosition.line, messageIdentifier.length)
+          idPosition,
+          new Position(idPosition.line, identifier.length)
         ),
       },
     ]

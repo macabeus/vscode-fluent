@@ -9,9 +9,10 @@ type GlobalState = {
   [ftlPath in string]: {
     idSpan: { [messageIdentifier in string]: { start: number, end: number } }
     valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
+    termSpan: { [messageIdentifier in string]: { start: number, end: number } }
     hover: { [messageIdentifier in string]: string }
     groupComments: Array<{ name: string, start: number, end: number }>
-    messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
+    referenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
     junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
   }
 }
@@ -76,22 +77,25 @@ const updateGlobalState = (params: UpdateGlobalStateParams) => {
 const getMessageIdSpan = (path: string, messageIdentifier: string) =>
   globalState[path].idSpan[messageIdentifier]
 
+const getTermSpan = (path: string, termIdentifier: string) =>
+  globalState[path].termSpan[termIdentifier]
+
 const getMessageValueSpan = (path: string, messageIdentifier: string) =>
   globalState[path].valueSpan[messageIdentifier]
 
 const getMessageHover = (path: string, messageIdentifier: string) =>
   globalState[path].hover[messageIdentifier]
 
-const isMessageReference = (path: string, messageIdentifier: string, position: number) => {
-  const messageSpans = globalState[path].messageReferenceSpan[messageIdentifier]
-  if (messageSpans === undefined) {
+const isTermOrMessageReference = (path: string, identifier: string, position: number) => {
+  const identifierSpan = globalState[path].referenceSpan[identifier]
+  if (identifierSpan === undefined) {
     return false
   }
 
   const isInMessageRange = ({ start, end }: { start: number, end: number }) =>
     ((position >= start) && (position <= end))
 
-  return messageSpans.some(isInMessageRange)
+  return identifierSpan.some(isInMessageRange)
 }
 
 const getGroupComments = () =>
@@ -125,9 +129,10 @@ const getAssociatedFluentFilesByFilePath = (path: string) => {
 export {
   updateGlobalState,
   getMessageIdSpan,
+  getTermSpan,
   getMessageValueSpan,
   getMessageHover,
-  isMessageReference,
+  isTermOrMessageReference,
   getGroupComments,
   getJunksAnnotations,
   getAssociatedFluentFilesByFilePath,
