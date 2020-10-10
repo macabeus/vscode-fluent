@@ -17,7 +17,9 @@
 - Syntax highlight
 - Show syntax errors
 - Code Action to extract a string to Fluent files
+- List file symbol (`⇧⌘O` on Mac, `Ctrl+Shift+O` on Linux and Windows)
 - Hover support on messages
+- Breadcrumbs support
 - Go to message definition from a reference
 
 ## Code Action
