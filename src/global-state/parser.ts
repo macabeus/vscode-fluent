@@ -2,29 +2,30 @@ import {
   FluentParser,
   Visitor,
   Message,
-  Expression,
   GroupComment,
   MessageReference,
-  VariableReference,
-  SelectExpression,
+  TermReference,
   Junk,
 } from '@fluent/syntax'
+import buildHoverValue from './build-hover-value'
 
 class VsCodeFluentVisitor extends Visitor {
   idSpan: { [messageIdentifier in string]: { start: number, end: number } }
   valueSpan: { [messageIdentifier in string]: { start: number, end: number } }
+  termSpan: { [messageIdentifier in string]: { start: number, end: number } }
   hover: { [messageIdentifier in string]: string }
   groupComments: Array<{ name: string, start: number, end: number }>
-  messageReferenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
+  referenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
   junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
 
   constructor() {
     super()
     this.idSpan = {}
     this.valueSpan = {}
+    this.termSpan = {}
     this.hover = {}
     this.groupComments = []
-    this.messageReferenceSpan = {}
+    this.referenceSpan = {}
     this.junksAnnotations = []
   }
 
@@ -42,55 +43,49 @@ class VsCodeFluentVisitor extends Visitor {
     this.groupComments.push(newGroupComment)
   }
 
+  visitTerm(node: Message) {
+    if (node.id.span && node.value?.span) {
+      this.termSpan[`-${node.id.name}`] = { start: node.id.span.start, end: node.id.span.end }
+      this.valueSpan[`-${node.id.name}`] = { start: node.value.span.start, end: node.value.span.end }
+    }
+
+    this.hover[`-${node.id.name}`] = node.value?.elements
+      ? buildHoverValue(node.value.elements)
+      : '[unknown]'
+
+    this.genericVisit(node)
+  }
+
   visitMessage(node: Message) {
     if (node.id.span && node.value?.span) {
       this.idSpan[node.id.name] = { start: node.id.span.start, end: node.id.span.end }
       this.valueSpan[node.id.name] = { start: node.value.span.start, end: node.value.span.end }
     }
 
-    const hoverValue = node.value?.elements
-      .map((element) => {
-        if (element.type === 'TextElement') {
-          return element.value
-        }
-
-        if (
-          element.type === 'Placeable' &&
-          (element.expression as Expression).type === 'VariableReference'
-        ) {
-          return `{ $${(element.expression as VariableReference).id.name} }`
-        }
-
-        if (
-          element.type === 'Placeable' &&
-          (element.expression as Expression).type === 'MessageReference'
-        ) {
-          return `{ ${(element.expression as MessageReference).id.name} }`
-        }
-
-        if (
-          element.type === 'Placeable' &&
-          (element.expression as Expression).type === 'SelectExpression' &&
-          (element.expression as SelectExpression).selector.type === 'VariableReference'
-        ) {
-          return `{ $${((element.expression as SelectExpression).selector as VariableReference).id.name } -> ... }`
-        }
-
-        return '{ unknown }'
-      })
-      .join(' ')
-    this.hover[node.id.name] = hoverValue || '[unknown]'
+    this.hover[node.id.name] = node.value?.elements
+      ? buildHoverValue(node.value.elements)
+      : '[unknown]'
 
     this.genericVisit(node)
   }
 
-  visitMessageReference(node: MessageReference) {
+  visitTermReference(node: TermReference) {
     if (node.span && node.id.span) {
-      if (this.messageReferenceSpan[node.id.name] === undefined) {
-        this.messageReferenceSpan[node.id.name] = []
+      if (this.referenceSpan[`-${node.id.name}`] === undefined) {
+        this.referenceSpan[`-${node.id.name}`] = []
       }
 
-      this.messageReferenceSpan[node.id.name].push({ start: node.id.span.start, end: node.id.span.end })
+      this.referenceSpan[`-${node.id.name}`].push({ start: node.id.span.start, end: node.id.span.end })
+    }
+  }
+
+  visitMessageReference(node: MessageReference) {
+    if (node.span && node.id.span) {
+      if (this.referenceSpan[node.id.name] === undefined) {
+        this.referenceSpan[node.id.name] = []
+      }
+
+      this.referenceSpan[node.id.name].push({ start: node.id.span.start, end: node.id.span.end })
     }
   }
 
@@ -122,8 +117,9 @@ const parser = (source: string) => {
     hover: visitorMessage.hover,
     idSpan: visitorMessage.idSpan,
     valueSpan: visitorMessage.valueSpan,
+    termSpan: visitorMessage.termSpan,
     groupComments: visitorMessage.groupComments,
-    messageReferenceSpan: visitorMessage.messageReferenceSpan,
+    referenceSpan: visitorMessage.referenceSpan,
     junksAnnotations: visitorMessage.junksAnnotations,
   }
 }

@@ -1,16 +1,16 @@
 import { HoverProvider } from 'vscode'
-import { getMessageHover, isMessageReference } from '../global-state'
+import { getMessageHover, isTermOrMessageReference } from '../global-state'
 import { getIdentifierRangeAtPosition } from '../utils'
 
 const hoverProvider: HoverProvider = {
   provideHover(document, position) {
-    const messageIdentifier = document.getText(getIdentifierRangeAtPosition(document, position))
+    const identifier = document.getText(getIdentifierRangeAtPosition(document, position))
 
-    if (isMessageReference(document.uri.path, messageIdentifier, document.offsetAt(position)) === false) {
+    if (isTermOrMessageReference(document.uri.path, identifier, document.offsetAt(position)) === false) {
       return
     }
 
-    const content = getMessageHover(document.uri.path, messageIdentifier)
+    const content = getMessageHover(document.uri.path, identifier)
 
     return {
       contents: [content],
