@@ -3,6 +3,7 @@ import { updateGlobalState } from './global-state'
 import { updateDiagnosticCollection } from './diagnostic'
 import registerCodeActionExtractStringToFluent from './providers/code-action-extract-string-to-fluent'
 import definitionProvider from './providers/definition'
+import documentSymbolProvider from './providers/document-symbol'
 import hoverProvider from './providers/hover'
 import { fileNameEndsWithFtl } from './utils'
 
@@ -53,6 +54,7 @@ const activate = (_context: vscode.ExtensionContext) => {
 
   registerCodeActionExtractStringToFluent()
   vscode.languages.registerDefinitionProvider('fluent', definitionProvider)
+  vscode.languages.registerDocumentSymbolProvider('fluent', documentSymbolProvider)
   vscode.languages.registerHoverProvider('fluent', hoverProvider)
 }
 

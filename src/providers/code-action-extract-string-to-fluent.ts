@@ -12,7 +12,7 @@ import {
 } from 'vscode'
 import {
   getMessageIdSpan,
-  getGroupComments,
+  getAllGroupComments,
   getAssociatedFluentFilesByFilePath,
 } from '../global-state'
 
@@ -46,7 +46,7 @@ const commandExtractStringToFluent = {
       return
     }
 
-    const groupComments = getGroupComments()
+    const groupComments = getAllGroupComments()
       .filter(groupComment => ftlPaths.some(path => path === groupComment.path))
 
     const askGroupAndId = async () => {

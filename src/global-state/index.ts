@@ -74,8 +74,14 @@ const updateGlobalState = (params: UpdateGlobalStateParams) => {
  * Helpers
  */
 
+const getMessagesIdSpan = (path: string) =>
+  globalState[path].idSpan
+
 const getMessageIdSpan = (path: string, messageIdentifier: string) =>
   globalState[path].idSpan[messageIdentifier]
+
+const getTermsSpan = (path: string) =>
+  globalState[path].termSpan
 
 const getTermSpan = (path: string, termIdentifier: string) =>
   globalState[path].termSpan[termIdentifier]
@@ -98,7 +104,10 @@ const isTermOrMessageReference = (path: string, identifier: string, position: nu
   return identifierSpan.some(isInMessageRange)
 }
 
-const getGroupComments = () =>
+const getGroupComments = (path: string) =>
+  globalState[path].groupComments
+
+const getAllGroupComments = () =>
   Object
     .keys(globalState)
     .map((ftlPath) => ({ path: ftlPath, groupComments: globalState[ftlPath].groupComments }))
@@ -128,12 +137,15 @@ const getAssociatedFluentFilesByFilePath = (path: string) => {
 
 export {
   updateGlobalState,
+  getMessagesIdSpan,
   getMessageIdSpan,
+  getTermsSpan,
   getTermSpan,
   getMessageValueSpan,
   getMessageHover,
   isTermOrMessageReference,
   getGroupComments,
+  getAllGroupComments,
   getJunksAnnotations,
   getAssociatedFluentFilesByFilePath,
 }
