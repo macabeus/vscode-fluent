@@ -105,7 +105,7 @@ repository:
     begin: >-
       (\s*\*?\[[a-zA-Z0-9_-]+\]\s*)
     end: >-
-      ^(?=\s)
+      ^(?=\s|})
     beginCaptures:
       1:
         name: variable.other.selector-item-begin.fluent
