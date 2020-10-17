@@ -95,19 +95,60 @@
       "match": "{\\s*((-|\\$)[a-zA-Z0-9_-]+|[a-zA-Z][a-zA-Z0-9_-]*|[0-9]+)\\s*}"
     },
     "placeable-function": {
-      "begin": "({\\s*[A-Z][A-Z0-9_-]*\\()",
-      "end": "(\\)\\s*})",
+      "begin": "({\\s*)([A-Z][A-Z0-9_-]*\\()",
+      "end": "(\\))?\\s*(})",
       "beginCaptures": {
         "1": {
-          "name": "variable.other.placeable-function-begin.fluent"
+          "name": "variable.other.placeable-function.call.begin.fluent"
+        },
+        "2": {
+          "name": "support.function.placeable-function.call.begin.fluent"
         }
       },
       "endCaptures": {
         "1": {
-          "name": "variable.other.placeable-function-end.fluent"
+          "name": "support.function.placeable-function.call.end.fluent"
+        },
+        "2": {
+          "name": "variable.other.placeable-function.call.end.fluent"
         }
       },
-      "contentName": "string.placeable-function-content.fluent"
+      "contentName": "string.placeable-function.fluent",
+      "patterns": [
+        {
+          "include": "#function-comma"
+        },
+        {
+          "include": "#function-positional-argument"
+        },
+        {
+          "include": "#function-named-argument"
+        },
+        {
+          "include": "#selector-item"
+        }
+      ]
+    },
+    "function-comma": {
+      "name": "support.function.function-comma.fluent",
+      "match": ","
+    },
+    "function-positional-argument": {
+      "name": "variable.other.function.positional-argument.fluent",
+      "match": "\\$[a-zA-Z0-9_-]+"
+    },
+    "function-named-argument": {
+      "begin": "([a-zA-Z0-9]+:)\\s*([\"a-zA-Z0-9]+)",
+      "end": "(?=\\)|,|\\s)",
+      "beginCaptures": {
+        "1": {
+          "name": "support.function.named-argument.name.fluent"
+        },
+        "2": {
+          "name": "variable.other.named-argument.value.fluent"
+        }
+      },
+      "name": "variable.other.named-argument.fluent"
     },
     "placeable-string": {
       "begin": "({\\s*\")(?=[^\\n]*\")",
