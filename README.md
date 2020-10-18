@@ -3,7 +3,7 @@
 > 💬 VS Code extension to work with Fluent, the correct-by-design l10n programming language
 
 <p align="center">
-  <img height="350px" src="https://user-images.githubusercontent.com/9501115/89740608-25066080-da82-11ea-97b7-c5e54f3023c4.png">
+  <img height="350px" src="./docs/featured-image.png">
 </p>
 
 **Fluent** is a Mozilla's programming language for natural-sounding translations. And **vscode-fluent** is a VisualCode Studio extension to improve developer experience while working with this language.
