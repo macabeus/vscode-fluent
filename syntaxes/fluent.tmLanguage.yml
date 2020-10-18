@@ -18,18 +18,11 @@ repository:
       ^(?=\S)
     beginCaptures:
       1:
-        name: storage.type.message-identifier.fluent
+        name: support.class.message-identifier.fluent
     contentName: string.fluent
     patterns:
       - include: "#attributes"
-      - include: "#placeable-reference-or-number"
-      - include: "#placeable-string"
-      - include: "#placeable-function"
-      - include: "#selectors"
-      - include: "#invalid-placeable-wrong-placeable-missing-end"
-      - include: "#invalid-placeable-string-missing-end-quote"
-      - include: "#invalid-placeable-wrong-function-name"
-      - include: "#invalid-placeable-start-with-number-then-has-letters"
+      - include: "#placeable"
 
   attributes:
     begin: >-
@@ -38,46 +31,84 @@ repository:
       ^(?=\s*[^\.])
     beginCaptures:
       1:
-        name: storage.type.attribute-begin.fluent
+        name: support.class.attribute-begin.fluent
     patterns:
-      - include: "#placeable-reference-or-number"
+      - include: "#placeable"
+
+  placeable:
+    begin: >-
+      ({)
+    end: >-
+      (})
+    beginCaptures:
+      1:
+        name: keyword.placeable.begin.fluent
+    endCaptures:
+      1:
+        name: keyword.placeable.end.fluent
+    contentName: variable.other.placeable.content.fluent
+    patterns:
       - include: "#placeable-string"
       - include: "#placeable-function"
-      - include: "#selectors"
+      - include: "#placeable-reference-or-number"
+      - include: "#selector"
       - include: "#invalid-placeable-wrong-placeable-missing-end"
       - include: "#invalid-placeable-string-missing-end-quote"
       - include: "#invalid-placeable-wrong-function-name"
-      - include: "#invalid-placeable-start-with-number-then-has-letters"
 
   placeable-reference-or-number:
-    name: variable.other.placeable.fluent
+    name: variable.other.placeable.reference-or-number.fluent
     match: "\
-      {\\s*\
-        (\
-          (-|\\$)[a-zA-Z0-9_-]+|\
-          [a-zA-Z][a-zA-Z0-9_-]*|\
-          [0-9]+\
-        )\
-      \\s*}"
+      (\
+        (-|\\$)[a-zA-Z0-9_-]+|\
+        [a-zA-Z][a-zA-Z0-9_-]*|\
+        [0-9]+\
+      )"
 
   placeable-function:
     begin: >-
-      ({\s*[A-Z][A-Z0-9_-]*\()
+      ([A-Z][A-Z0-9_-]*\()
     end: >-
-      (\)\s*})
+      (\))
     beginCaptures:
       1:
-        name: variable.other.placeable-function-begin.fluent
+        name: support.function.placeable-function.call.begin.fluent
     endCaptures:
       1:
-        name: variable.other.placeable-function-end.fluent
-    contentName: string.placeable-function-content.fluent
+        name: support.function.placeable-function.call.end.fluent
+    contentName: string.placeable-function.fluent
+    patterns:
+      - include: "#function-comma"
+      - include: "#function-positional-argument"
+      - include: "#function-named-argument"
+
+  function-comma:
+    name: support.function.function-comma.fluent
+    match: >-
+      ,
+
+  function-positional-argument:
+    name: variable.other.function.positional-argument.fluent
+    match: >-
+      \$[a-zA-Z0-9_-]+
+
+  function-named-argument:
+    begin: >-
+      ([a-zA-Z0-9]+:)\s*(["a-zA-Z0-9]+)
+    end: >-
+      (?=\)|,|\s)
+    beginCaptures:
+      1:
+        name: support.function.named-argument.name.fluent
+      2:
+        name: variable.other.named-argument.value.fluent
+    name: variable.other.named-argument.fluent
 
   placeable-string:
     begin: >-
-      ({\s*")(?=[^\n]*")
+      (")(?=[^\n]*")
     end: >-
-      ("\s*})
+      (")
     beginCaptures:
       1:
         name: variable.other.placeable-string-begin.fluent
@@ -86,38 +117,33 @@ repository:
         name: variable.other.placeable-string-end.fluent
     contentName: string.placeable-string-content.fluent
 
-  selectors:
+  selector:
     begin: >-
-      ({\s*\$[a-zA-Z0-9_-]+\s*->)
+      (->)
     end: >-
-      (\s*})
+      ^(?=\s*})
     beginCaptures:
       1:
-        name: variable.other.selector-begin.fluent
-    endCaptures:
-      1:
-        name: variable.other.selector-end.fluent
-    contentName: string.selector-content.fluent
+        name: support.function.selector.begin.fluent
+    contentName: string.selector.content.fluent
     patterns:
       - include: "#selector-item"
 
   selector-item:
     begin: >-
-      (\s*\*?\[[a-zA-Z0-9_-]+\]\s*)
+      (\s*\*?\[)([a-zA-Z0-9_-]+)(\]\s*)
     end: >-
-      ^(?=\s)
+      ^(?=\s|})
     beginCaptures:
       1:
-        name: variable.other.selector-item-begin.fluent
-    contentName: string.selector-item-content.fluent
+        name: support.function.selector-item.begin.fluent
+      2:
+        name: variable.other.selector-item.begin.fluent
+      3:
+        name: support.function.selector-item.begin.fluent
+    contentName: string.selector-item.content.fluent
     patterns:
-      - include: "#placeable-reference-or-number"
-      - include: "#placeable-string"
-      - include: "#placeable-function"
-      - include: "#invalid-placeable-wrong-placeable-missing-end"
-      - include: "#invalid-placeable-string-missing-end-quote"
-      - include: "#invalid-placeable-wrong-function-name"
-      - include: "#invalid-placeable-start-with-number-then-has-letters"
+      - include: "#placeable"
 
   wrong-line:
     match: >-
@@ -127,19 +153,9 @@ repository:
   invalid-placeable-wrong-placeable-missing-end:
     name: invalid.illegal.wrong-placeable-missing-end.fluent
     match: >-
-      {([^}A-Z]*$|[^-][^>]$)\b
+      ([^}A-Z]*$|[^-][^>]$)\b
 
   invalid-placeable-string-missing-end-quote:
     name: invalid.illegal.wrong-placeable-missing-end-quote.fluent
     match: >-
-      {\s*"[^"]+$
-
-  invalid-placeable-wrong-function-name:
-    name: invalid.illegal.wrong-placeable-name.fluent
-    match: >-
-      {\s*([0-9]\S*\(|[A-Z]*[^A-Z]\S*\()
-
-  invalid-placeable-start-with-number-then-has-letters:
-    name: invalid.illegal.wrong-placeable-number-then-letters.fluent
-    match: >-
-      {\s*[0-9]+[^0-9]+\s*}
+      "[^"]+$
