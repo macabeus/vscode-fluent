@@ -2,6 +2,9 @@
 
 > 💬 VS Code extension to work with Fluent, the correct-by-design l10n programming language
 
+[![GitHub](https://flat.badgen.net/github/stars/macabeus/vscode-fluent?icon=github)](https://github.com/macabeus/vscode-fluent)
+[![Visual Studio Marketplace](https://flat.badgen.net/vs-marketplace/d/macabeus.vscode-fluent?icon=visualstudio)](https://marketplace.visualstudio.com/items?itemName=macabeus.vscode-fluent)
+
 <p align="center">
   <img height="350px" src="./docs/featured-image.png">
 </p>
