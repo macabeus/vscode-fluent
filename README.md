@@ -8,9 +8,10 @@
 
 **Fluent** is a Mozilla's programming language for natural-sounding translations. And **vscode-fluent** is a VisualCode Studio extension to improve developer experience while working with this language.
 
-- [Official Fluent's website](https://projectfluent.org/)
-- [Fluent Syntax Guide](https://www.projectfluent.org/fluent/guide/)
-- [Fluent's Playground](https://projectfluent.org/play/)
+- 🌎 [Official Fluent's website](https://projectfluent.org/)
+- 📓 [Fluent Syntax Guide](https://www.projectfluent.org/fluent/guide/)
+- 🎢 [Fluent's Playground](https://projectfluent.org/play/)
+- 🎥 [Talk about localization and Fluent](https://youtu.be/nJnAVUIyf5U?t=76) (in Portuguese 🇧🇷)
 
 ## Feature
 
@@ -45,7 +46,7 @@ By default, the message will be added to all Fluent files on the workspace. But 
 
 ### Syntax
 
-The syntax is written on a [YML file](./syntaxes/fluent.tmLanguage.yml). Before to run the extension on vscode, you should compile it to JSON.
+The syntax is written on a [YML file](./syntaxes/fluent.tmLanguage.yml). Before to run the extension on VSCode, you should compile it to JSON.
 
 ```
 > npm run build-syntaxes
@@ -53,4 +54,8 @@ The syntax is written on a [YML file](./syntaxes/fluent.tmLanguage.yml). Before 
 
 ### Extension
 
-You can run the extension using the vscode debugger out-of-the-box.
+You can run the extension using the `Run Extension` task on VSCode.
+
+### Tests
+
+You can run the automated tests using the `Test Extension` task on VSCode.

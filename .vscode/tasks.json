@@ -7,11 +7,9 @@
       "script": "build-syntaxes"
     },
     {
-      "label": "watch",
+      "label": "build",
       "type": "npm",
-      "script": "watch",
-      "problemMatcher": "$tsc-watch",
-      "isBackground": true,
+      "script": "build",
       "presentation": {
         "reveal": "never"
       }
