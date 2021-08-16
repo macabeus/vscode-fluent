@@ -8,9 +8,10 @@
 
 **Fluent** is a Mozilla's programming language for natural-sounding translations. And **vscode-fluent** is a VisualCode Studio extension to improve developer experience while working with this language.
 
-- [Official Fluent's website](https://projectfluent.org/)
-- [Fluent Syntax Guide](https://www.projectfluent.org/fluent/guide/)
-- [Fluent's Playground](https://projectfluent.org/play/)
+- 🌎 [Official Fluent's website](https://projectfluent.org/)
+- 📓 [Fluent Syntax Guide](https://www.projectfluent.org/fluent/guide/)
+- 🎢 [Fluent's Playground](https://projectfluent.org/play/)
+- 🎥 [Talk about localization and Fluent](https://youtu.be/nJnAVUIyf5U?t=76) (in Portuguese 🇧🇷)
 
 ## Feature
 

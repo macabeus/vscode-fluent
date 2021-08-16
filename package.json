@@ -6,6 +6,7 @@
   "publisher": "macabeus",
   "repository": "https://github.com/macabeus/vscode-fluent",
   "scripts": {
+    "build": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "build-syntaxes": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json"
   },
@@ -15,7 +16,7 @@
   "categories": [
     "Programming Languages"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension.js",
   "activationEvents": [
     "*"
   ],
@@ -57,12 +58,21 @@
     "path": "0.12.7"
   },
   "devDependencies": {
+    "@types/chai": "4.2.21",
+    "@types/glob": "7.1.4",
+    "@types/mocha": "9.0.0",
     "@types/node": "14.11.10",
     "@types/vscode": "^1.50.0",
     "@typescript-eslint/eslint-plugin": "4.4.1",
     "@typescript-eslint/parser": "4.4.1",
+    "chai": "4.3.4",
+    "chai-shallow-deep-equal": "1.4.6",
+    "dedent-js": "1.0.1",
+    "glob": "7.1.7",
+    "mocha": "9.0.3",
     "eslint": "7.11.0",
     "js-yaml": "3.14.0",
+    "vscode-test": "1.6.1",
     "typescript": "4.0.3"
   }
 }

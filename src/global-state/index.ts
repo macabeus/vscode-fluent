@@ -18,7 +18,7 @@ type GlobalState = {
 }
 
 const initialGlobalState = (): GlobalState => ({})
-const globalState = initialGlobalState()
+let globalState = initialGlobalState()
 
 /**
  * Global to associate a project path to its FTLs
@@ -56,7 +56,8 @@ updateGlobalProjectsFtls()
 
 type UpdateGlobalStateParams = (
   { type: 'loadFtl', payload: { path: string, content: string } } |
-  { type: 'updateConfiguration' }
+  { type: 'updateConfiguration' } |
+  { type: 'reset' }
 )
 const updateGlobalState = (params: UpdateGlobalStateParams) => {
   if (params.type === 'loadFtl') {
@@ -66,6 +67,11 @@ const updateGlobalState = (params: UpdateGlobalStateParams) => {
 
   if (params.type === 'updateConfiguration') {
     updateGlobalProjectsFtls()
+    return
+  }
+
+  if (params.type === 'reset') {
+    globalState = initialGlobalState()
     return
   }
 }
