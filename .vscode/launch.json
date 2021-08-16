@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Run Extension",
-      "preLaunchTask": "watch",
+      "preLaunchTask": "build",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -13,6 +13,20 @@
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
       ]
+    },
+    {
+      "name": "Test Extension",
+      "preLaunchTask": "build",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "/test",
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test/index.js"
+      ],
+      "outFiles": ["${workspaceFolder}/out/test/**/*.js"]
     }
   ]
 }
