@@ -4,6 +4,7 @@ import {
   Message,
   GroupComment,
   MessageReference,
+  Term,
   TermReference,
   Junk,
 } from '@fluent/syntax'
@@ -43,13 +44,13 @@ class VsCodeFluentVisitor extends Visitor {
     this.groupComments.push(newGroupComment)
   }
 
-  visitTerm(node: Message) {
-    if (node.id.span && node.value?.span) {
+  visitTerm(node: Term) {
+    if (node.id.span && node.value.span) {
       this.termSpan[`-${node.id.name}`] = { start: node.id.span.start, end: node.id.span.end }
       this.valueSpan[`-${node.id.name}`] = { start: node.value.span.start, end: node.value.span.end }
     }
 
-    this.hover[`-${node.id.name}`] = node.value?.elements
+    this.hover[`-${node.id.name}`] = node.value.elements
       ? buildHoverValue(node.value.elements)
       : '[unknown]'
 
