@@ -15,16 +15,30 @@
       ]
     },
     {
-      "name": "Test Extension",
+      "name": "Test Extension - No Workspace",
       "preLaunchTask": "build",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "/test",
+        "/no-workspace",
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/index.js"
+        "--extensionTestsPath=${workspaceFolder}/out/test/run-no-workspace.js"
+      ],
+      "outFiles": ["${workspaceFolder}/out/test/**/*.js"]
+    },
+    {
+      "name": "Test Extension - With Workspace",
+      "preLaunchTask": "build",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "${workspaceFolder}/test/workspace",
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/out/test/run-with-workspace.js"
       ],
       "outFiles": ["${workspaceFolder}/out/test/**/*.js"]
     }

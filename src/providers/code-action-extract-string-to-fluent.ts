@@ -15,11 +15,17 @@ import {
   getAllGroupComments,
   getAssociatedFluentFilesByFilePath,
 } from '../global-state'
+import { workspaceHasFtlFiles } from '../utils'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
 const codeActionProvider: CodeActionProvider = {
-  provideCodeActions: (document, range) => {
+  provideCodeActions: async (document, range) => {
+    const thereAreFtlFiles = await workspaceHasFtlFiles()
+    if (thereAreFtlFiles === false) {
+      return []
+    }
+
     const selectedText = document
       .getText(range)
       .replace(/^['"]/, '')
