@@ -15,18 +15,39 @@
       ]
     },
     {
-      "name": "Test Extension",
-      "preLaunchTask": "build",
+      "name": "Test Extension - No Workspace",
+      "preLaunchTask": "before-run-tests",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "/test",
+        "/no-workspace",
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/index.js"
+        "--extensionTestsPath=${workspaceFolder}/node_modules/.bin/vscode-tests-runner"
       ],
-      "outFiles": ["${workspaceFolder}/out/test/**/*.js"]
+      "env": {
+        "VSCODE_TESTS_PATH": "${workspaceFolder}/out/tests/no-workspace/"
+      },
+      "outFiles": ["${workspaceFolder}/out/tests/**/*.js"]
+    },
+    {
+      "name": "Test Extension - With Workspace",
+      "preLaunchTask": "before-run-tests",
+      "postDebugTask": "remove-test-workspace-folder",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": [
+        "${workspaceFolder}/test-workspace",
+        "--disable-extensions",
+        "--extensionDevelopmentPath=${workspaceFolder}",
+        "--extensionTestsPath=${workspaceFolder}/node_modules/.bin/vscode-tests-runner"
+      ],
+      "env": {
+        "VSCODE_TESTS_PATH": "${workspaceFolder}/out/tests/with-workspace/"
+      },
+      "outFiles": ["${workspaceFolder}/out/tests/**/*.js"]
     }
   ]
 }

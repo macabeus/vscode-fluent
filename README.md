@@ -2,8 +2,9 @@
 
 > 💬 VS Code extension to work with Fluent, the correct-by-design l10n programming language
 
-[![GitHub](https://flat.badgen.net/github/stars/macabeus/vscode-fluent?icon=github)](https://github.com/macabeus/vscode-fluent)
-[![Visual Studio Marketplace](https://flat.badgen.net/vs-marketplace/d/macabeus.vscode-fluent?icon=visualstudio)](https://marketplace.visualstudio.com/items?itemName=macabeus.vscode-fluent)
+[![GitHub Stars](https://flat.badgen.net/github/stars/macabeus/vscode-fluent?icon=github)](https://github.com/macabeus/vscode-fluent)
+[![Tests](https://flat.badgen.net/github/checks/macabeus/vscode-fluent/master/Test?icon=github)](https://github.com/macabeus/vscode-fluent)
+[![Visual Studio Marketplace Downloads](https://flat.badgen.net/vs-marketplace/d/macabeus.vscode-fluent?icon=visualstudio)](https://marketplace.visualstudio.com/items?itemName=macabeus.vscode-fluent)
 
 <p align="center">
   <img height="350px" src="./docs/featured-image.png">
@@ -61,4 +62,4 @@ You can run the extension using the `Run Extension` task on VSCode.
 
 ### Tests
 
-You can run the automated tests using the `Test Extension` task on VSCode.
+You can run the automated tests using the `Test Extension - No Workspace` and `Test Extension - With Workspace` tasks on VSCode.
