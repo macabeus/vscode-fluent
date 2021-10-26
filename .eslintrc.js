@@ -7,7 +7,7 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
     'semi': ['error', 'never'],
     'prefer-arrow-callback': 'error',
-    'quotes': ['error', 'single'],
+    'quotes': ['error', 'single', { avoidEscape: true }],
     'no-trailing-spaces': 'error',
     'eol-last': ['error', 'always'],
     'comma-dangle': [

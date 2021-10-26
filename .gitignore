@@ -3,3 +3,4 @@ node_modules
 out/*
 !out/.keep
 .vscode-test
+test-workspace/*
