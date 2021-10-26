@@ -19,24 +19,38 @@ import { workspaceHasFtlFiles } from '../utils'
 
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
+const shouldDisplayCodeAction = async (selectedText: string) => {
+  const thereAreFtlFiles = await workspaceHasFtlFiles()
+  if (thereAreFtlFiles === false) {
+    return false
+  }
+
+  const hasQuotesBordering = selectedText.match(/^(['"`]).*\1$/s)
+  if (hasQuotesBordering === null) {
+    return false
+  }
+
+  return true
+}
+
 const codeActionProvider: CodeActionProvider = {
   provideCodeActions: async (document, range) => {
-    const thereAreFtlFiles = await workspaceHasFtlFiles()
-    if (thereAreFtlFiles === false) {
+    const selectedText = document.getText(range)
+
+    if (await shouldDisplayCodeAction(selectedText) === false) {
       return []
     }
 
-    const selectedText = document
-      .getText(range)
-      .replace(/^['"]/, '')
-      .replace(/['"]$/, '')
+    const escapedText = selectedText
+      .replace(/^['"`]/, '')
+      .replace(/['"`]$/, '')
 
     const codeAction = new CodeAction('Extract to Fluent files', CodeActionKind.QuickFix)
 
     codeAction.command = {
       command: commandNameExtractStringToFluent,
       title: 'Extract string to Fluent files',
-      arguments: [selectedText, document, range],
+      arguments: [escapedText, document, range],
     }
 
     return [codeAction]
