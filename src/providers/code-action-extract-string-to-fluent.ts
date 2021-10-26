@@ -113,7 +113,13 @@ const commandExtractStringToFluent = {
           .find(group => group.name === groupName)
           ?.end
 
-        let insertCode = `\n${id} = ${selectedText}`
+        const paddedText = selectedText
+          .split('\n')
+          .map((line, index) => index === 0
+            ? line
+            : `    ${line}`)
+          .join('\n')
+        let insertCode = `\n${id} = ${paddedText}`
 
         if (groupOffsetEnd === undefined) {
           const positionEndFile = textDocument.lineAt(textDocument.lineCount - 1).range.end
