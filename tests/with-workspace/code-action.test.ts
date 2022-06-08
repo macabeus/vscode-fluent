@@ -1,7 +1,5 @@
 const { Range, Position } = vscode
 
-jest.setTimeout(99999)
-
 describe('#Code Action', () => {
   describe('when there is no ftl file', () => {
     it('does not have the option to extract string to fluent', () => {
@@ -95,11 +93,11 @@ describe('#Code Action', () => {
 
             await codeActions['Extract to Fluent files']()
 
-            const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-            expect(currentText).toBe('"example";')
-
             const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
             expect(ftlText).toBe('')
+
+            const indexText = await take.documentText(mapFilenameToUri['index.js'])
+            expect(indexText).toBe('"example";')
           }
         )
       })
@@ -127,11 +125,11 @@ describe('#Code Action', () => {
 
               await codeActions['Extract to Fluent files']()
 
-              const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-              expect(currentText).toBe('"example";')
-
               const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
               expect(ftlText).toBe('')
+
+              const indexText = await take.documentText(mapFilenameToUri['index.js'])
+              expect(indexText).toBe('"example";')
             }
           )
         })
@@ -161,11 +159,11 @@ describe('#Code Action', () => {
 
                 await codeActions['Extract to Fluent files']()
 
-                const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-                expect(currentText).toBe('"example";')
-
                 const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
                 expect(ftlText).toBe('')
+
+                const indexText = await take.documentText(mapFilenameToUri['index.js'])
+                expect(indexText).toBe('"example";')
               }
             )
           })
@@ -194,11 +192,11 @@ describe('#Code Action', () => {
 
                 await codeActions['Extract to Fluent files']()
 
-                const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-                expect(currentText).toBe('"example";')
-
                 const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
                 expect(ftlText).toBe('')
+
+                const indexText = await take.documentText(mapFilenameToUri['index.js'])
+                expect(indexText).toBe('"example";')
               }
             )
           })
@@ -227,8 +225,12 @@ describe('#Code Action', () => {
 
                 await codeActions['Extract to Fluent files']()
 
-                const newText = await waitFor.documentChange(mapFilenameToUri['index.js'])
-                expect(newText).toBe("t('my-message-id');")
+                const newIndexText = await waitFor(async () => {
+                  const indexText = await take.documentText(mapFilenameToUri['index.js'])
+                  expect(indexText).not.toBe('"example";')
+                  return indexText
+                })
+                expect(newIndexText).toBe("t('my-message-id');")
 
                 const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
                 expect(ftlText).toBe(

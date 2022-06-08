@@ -9,8 +9,8 @@
     "build": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "build-syntaxes": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json",
-    "tests:ci:no-workspace": "vscode-electron-starter no-workspace $INIT_CWD insiders",
-    "tests:ci:with-workspace": "vscode-electron-starter with-workspace $INIT_CWD insiders"
+    "tests:ci:no-workspace": "vscode-electron-starter no-workspace stable out/tests/no-workspace",
+    "tests:ci:with-workspace": "vscode-electron-starter with-workspace stable out/tests/with-workspace"
   },
   "engines": {
     "vscode": "^1.50.0"
@@ -67,7 +67,7 @@
     "@types/jest-environment-vscode-extension": "0.0.0",
     "@typescript-eslint/eslint-plugin": "4.29.2",
     "@typescript-eslint/parser": "4.29.2",
-    "jest-environment-vscode-extension": "0.0.1",
+    "jest-environment-vscode-extension": "0.0.3",
     "eslint": "7.32.0",
     "jest": "27.4.3",
     "js-yaml": "4.1.0",

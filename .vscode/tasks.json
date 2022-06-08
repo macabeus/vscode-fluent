@@ -44,13 +44,33 @@
       },
     },
     {
-      "label": "before-run-tests",
+      "label": "drop-monkey-patch-allow-mocks",
+      "type": "shell",
+      "command": "node ./node_modules/.bin/drop-monkey-patch-allow-mocks ${workspaceFolder}",
+      "presentation": {
+        "reveal": "silent",
+        "revealProblems": "onProblem"
+      }
+    },
+    {
+      "label": "pre-run-tests",
       "dependsOrder": "sequence",
       "dependsOn": [
         "remove-test-workspace-folder",
         "create-test-workspace-folder",
         "build",
         "insert-monkey-patch-allow-mocks"
+      ],
+      "presentation": {
+        "reveal": "silent",
+        "revealProblems": "onProblem"
+      }
+    },
+    {
+      "label": "post-run-tests",
+      "dependsOn": [
+        "remove-test-workspace-folder",
+        "drop-monkey-patch-allow-mocks"
       ],
       "presentation": {
         "reveal": "silent",

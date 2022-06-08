@@ -16,7 +16,8 @@
     },
     {
       "name": "Test Extension - No Workspace",
-      "preLaunchTask": "before-run-tests",
+      "preLaunchTask": "pre-run-tests",
+      "postDebugTask": "post-run-tests",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
@@ -33,8 +34,8 @@
     },
     {
       "name": "Test Extension - With Workspace",
-      "preLaunchTask": "before-run-tests",
-      "postDebugTask": "remove-test-workspace-folder",
+      "preLaunchTask": "pre-run-tests",
+      "postDebugTask": "post-run-tests",
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
