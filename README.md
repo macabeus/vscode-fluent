@@ -15,7 +15,9 @@
 - 🌎 [Official Fluent's website](https://projectfluent.org/)
 - 📓 [Fluent Syntax Guide](https://www.projectfluent.org/fluent/guide/)
 - 🎢 [Fluent's Playground](https://projectfluent.org/play/)
-- 🎥 [Talk about localization and Fluent](https://youtu.be/nJnAVUIyf5U?t=76) (in Portuguese 🇧🇷)
+- 🎥 Talk about localization and Fluent
+  - [🇺🇸 In English](https://youtu.be/kHHFcuQq70k?t=357)
+  - [🇧🇷 In Portuguese](https://youtu.be/nJnAVUIyf5U?t=76)
 
 ## Feature
 
