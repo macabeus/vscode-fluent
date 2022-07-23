@@ -54,10 +54,10 @@ By default, the message will be added to all Fluent files on the workspace. But 
 
 ### Syntax
 
-The syntax is written on a [YML file](./syntaxes/fluent.tmLanguage.yml). Before to run the extension on VSCode, you should compile it to JSON.
+The syntax is written on a [YML file](./syntaxes/fluent.tmLanguage.yml). You can compile it running:
 
 ```
-> npm run build-syntaxes
+> npm run build:syntaxes
 ```
 
 ### Extension

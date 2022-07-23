@@ -10,9 +10,10 @@
     "url": "https://github.com/macabeus/vscode-fluent.git"
   },
   "scripts": {
-    "build": "tsc -p ./",
+    "build": "npm run build:syntaxes && npm run build:extension",
     "watch": "tsc -watch -p ./",
-    "build-syntaxes": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json",
+    "build:extension": "tsc -p ./",
+    "build:syntaxes": "npx js-yaml syntaxes/fluent.tmLanguage.yml > syntaxes/fluent.tmLanguage.json",
     "tests:ci:no-workspace": "vscode-electron-starter no-workspace $INIT_CWD insiders",
     "tests:ci:with-workspace": "vscode-electron-starter with-workspace $INIT_CWD insiders"
   },
