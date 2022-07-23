@@ -1,3 +1,5 @@
+<img src="./assets/logo.png" align="right" height="130px" />
+
 # vscode-fluent
 
 > 💬 VS Code extension to work with Fluent, the correct-by-design l10n programming language
