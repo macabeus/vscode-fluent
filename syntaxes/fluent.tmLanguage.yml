@@ -132,8 +132,12 @@ repository:
   selector-item:
     begin: >-
       (\s*\*?\[)([a-zA-Z0-9_-]+)(\]\s*)
-    end: >-
-      ^(?=\s|})
+    end: "\
+      ^(?=\
+        (\\s*})|\
+        (\\s*\\[)|\
+        (\\s*\\*)\
+      )"
     beginCaptures:
       1:
         name: support.function.selector-item.begin.fluent
