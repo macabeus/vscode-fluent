@@ -4,7 +4,11 @@
   "description": "VS Code extension to work with Fluent, the correct-by-design l10n programming language",
   "version": "0.0.6",
   "publisher": "macabeus",
-  "repository": "https://github.com/macabeus/vscode-fluent",
+  "icon": "assets/logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/macabeus/vscode-fluent.git"
+  },
   "scripts": {
     "build": "tsc -p ./",
     "watch": "tsc -watch -p ./",
@@ -44,7 +48,11 @@
         "extensions": [
           ".ftl"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./assets/fileicon.svg",
+          "dark": "./assets/fileicon.svg"
+        }
       }
     ],
     "grammars": [
