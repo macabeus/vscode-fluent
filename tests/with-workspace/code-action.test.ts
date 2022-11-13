@@ -1,6 +1,28 @@
+import type { TextDocument } from 'vscode'
+
 const { Range, Position } = vscode
 
 jest.setTimeout(99999)
+
+const exceptNoTextChange = async (doc: TextDocument) => {
+  const text = await take.documentText(doc)
+
+  try {
+    const newText = await waitFor(async () => {
+      const newText = await take.documentText(doc)
+      expect(newText).not.toBe(text)
+      return newText
+    })
+
+    throw new Error(`Text from document "${doc.fileName}" changed from "${text}" to "${newText}"`)
+  } catch (e) {
+    if ((e as Error)?.message === 'Timeout on waitFor') {
+      return
+    }
+
+    throw e
+  }
+}
 
 describe('#Code Action', () => {
   describe('when there is no ftl file', () => {
@@ -11,9 +33,9 @@ describe('#Code Action', () => {
             'index.js': '"example";',
           },
         },
-        async (mapFilenameToUri) => {
+        async (mapFileToDoc) => {
           const codeActions = await take.codeActions(
-            mapFilenameToUri['index.js'],
+            mapFileToDoc['index.js'],
             new Range(new Position(0, 0), new Position(0, 9))
           )
 
@@ -32,9 +54,9 @@ describe('#Code Action', () => {
             'en.ftl': '',
           },
         },
-        async (mapFilenameToUri) => {
+        async (mapFileToDoc) => {
           const codeActions = await take.codeActions(
-            mapFilenameToUri['index.js'],
+            mapFileToDoc['index.js'],
             new Range(new Position(0, 0), new Position(0, 9))
           )
 
@@ -64,9 +86,11 @@ describe('#Code Action', () => {
             ),
           },
         },
-        async (mapFilenameToUri) => {
+        async (mapFileToDoc) => {
+          await new Promise(r => setTimeout(r, 1000))
+
           const codeActions = await take.codeActions(
-            mapFilenameToUri['index.js'],
+            mapFileToDoc['index.js'],
             new Range(new Position(0, 0), new Position(0, 9))
           )
 
@@ -87,18 +111,18 @@ describe('#Code Action', () => {
               'window.showQuickPick': async () => undefined,
             },
           },
-          async (mapFilenameToUri) => {
+          async (mapFileToDoc) => {
+            await new Promise(r => setTimeout(r, 1000))
             const codeActions = await take.codeActions(
-              mapFilenameToUri['index.js'],
+              mapFileToDoc['index.js'],
               new Range(new Position(0, 0), new Position(0, 9))
             )
 
             await codeActions['Extract to Fluent files']()
 
-            const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-            expect(currentText).toBe('"example";')
+            await exceptNoTextChange(mapFileToDoc['index.js'])
 
-            const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
+            const ftlText = await take.documentText(mapFileToDoc['en.ftl'])
             expect(ftlText).toBe('')
           }
         )
@@ -119,18 +143,18 @@ describe('#Code Action', () => {
                 'window.showInputBox': async () => undefined,
               },
             },
-            async (mapFilenameToUri) => {
+            async (mapFileToDoc) => {
+              await new Promise(r => setTimeout(r, 1000))
               const codeActions = await take.codeActions(
-                mapFilenameToUri['index.js'],
+                mapFileToDoc['index.js'],
                 new Range(new Position(0, 0), new Position(0, 9))
               )
 
               await codeActions['Extract to Fluent files']()
 
-              const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-              expect(currentText).toBe('"example";')
+              await exceptNoTextChange(mapFileToDoc['index.js'])
 
-              const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
+              const ftlText = await take.documentText(mapFileToDoc['en.ftl'])
               expect(ftlText).toBe('')
             }
           )
@@ -153,18 +177,18 @@ describe('#Code Action', () => {
                     .mockResolvedValueOnce(undefined),
                 },
               },
-              async (mapFilenameToUri) => {
+              async (mapFileToDoc) => {
+                await new Promise(r => setTimeout(r, 1000))
                 const codeActions = await take.codeActions(
-                  mapFilenameToUri['index.js'],
+                  mapFileToDoc['index.js'],
                   new Range(new Position(0, 0), new Position(0, 9))
                 )
 
                 await codeActions['Extract to Fluent files']()
 
-                const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-                expect(currentText).toBe('"example";')
+                await exceptNoTextChange(mapFileToDoc['index.js'])
 
-                const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
+                const ftlText = await take.documentText(mapFileToDoc['en.ftl'])
                 expect(ftlText).toBe('')
               }
             )
@@ -186,18 +210,18 @@ describe('#Code Action', () => {
                     .mockResolvedValueOnce(''),
                 },
               },
-              async (mapFilenameToUri) => {
+              async (mapFileToDoc) => {
+                await new Promise(r => setTimeout(r, 1000))
                 const codeActions = await take.codeActions(
-                  mapFilenameToUri['index.js'],
+                  mapFileToDoc['index.js'],
                   new Range(new Position(0, 0), new Position(0, 9))
                 )
 
                 await codeActions['Extract to Fluent files']()
 
-                const currentText = await waitFor.not.documentChange(mapFilenameToUri['index.js'])
-                expect(currentText).toBe('"example";')
+                await exceptNoTextChange(mapFileToDoc['index.js'])
 
-                const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
+                const ftlText = await take.documentText(mapFileToDoc['en.ftl'])
                 expect(ftlText).toBe('')
               }
             )
@@ -206,10 +230,11 @@ describe('#Code Action', () => {
 
         describe('and fill a valid message id', () => {
           it('move the message to ftl file', () => {
+            const indexJsInitialText = '"example";'
             return using(
               {
                 files: {
-                  'index.js': '"example";',
+                  'index.js': indexJsInitialText,
                   'en.ftl': '',
                 },
                 mocks: {
@@ -219,18 +244,24 @@ describe('#Code Action', () => {
                     .mockResolvedValueOnce('my-message-id'),
                 },
               },
-              async (mapFilenameToUri) => {
+              async (mapFileToDoc) => {
+                await new Promise(r => setTimeout(r, 1000))
                 const codeActions = await take.codeActions(
-                  mapFilenameToUri['index.js'],
+                  mapFileToDoc['index.js'],
                   new Range(new Position(0, 0), new Position(0, 9))
                 )
 
                 await codeActions['Extract to Fluent files']()
 
-                const newText = await waitFor.documentChange(mapFilenameToUri['index.js'])
+                const newText = await waitFor(async () => {
+                  const newText = await take.documentText(mapFileToDoc['index.js'])
+                  expect(newText).not.toBe(indexJsInitialText)
+                  return newText
+                })
                 expect(newText).toBe("t('my-message-id');")
+                // await exceptNoTextChange(mapFileToDoc['index.js'])
 
-                const ftlText = await take.documentText(mapFilenameToUri['en.ftl'])
+                const ftlText = await take.documentText(mapFileToDoc['en.ftl'])
                 expect(ftlText).toBe(
                   dedent(`
                     ## My Group
