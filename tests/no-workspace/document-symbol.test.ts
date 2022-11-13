@@ -7,8 +7,8 @@ describe('#Document Symbol', () => {
         'en.ftl': 'basic = my message',
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -30,8 +30,8 @@ describe('#Document Symbol', () => {
         `),
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -49,8 +49,8 @@ describe('#Document Symbol', () => {
         'en.ftl': '-term = hey',
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -68,8 +68,8 @@ describe('#Document Symbol', () => {
         'en.ftl': 'message-interpolation = the { basic } interpolation',
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -87,8 +87,8 @@ describe('#Document Symbol', () => {
         'en.ftl': 'term-interpolation = the { -term } interpolation',
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -113,8 +113,8 @@ describe('#Document Symbol', () => {
         `),
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(1)
       expect(symbols[0]).toMatchObject({
@@ -143,8 +143,8 @@ describe('#Document Symbol', () => {
         `),
       },
     },
-    async (mapFileToUri) => {
-      const symbols = await take.documentSymbols(mapFileToUri['en.ftl'])
+    async (mapFileToDoc) => {
+      const symbols = await take.documentSymbols(mapFileToDoc['en.ftl'])
 
       expect(symbols).toHaveLength(3)
       expect(symbols[0]).toMatchObject({

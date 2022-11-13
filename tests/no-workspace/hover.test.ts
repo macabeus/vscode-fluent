@@ -9,8 +9,8 @@ describe('#Hover', () => {
           message-interpolation = the { message } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const hovers = await take.hovers(mapFileToUri['en.ftl'], new Position(1, 32))
+      async (mapFileToDoc) => {
+        const hovers = await take.hovers(mapFileToDoc['en.ftl'], new Position(1, 32))
 
         expect(hovers).toEqual(['foo'])
       })
@@ -24,8 +24,8 @@ describe('#Hover', () => {
           term-interpolation = the { -term } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const hovers = await take.hovers(mapFileToUri['en.ftl'], new Position(1, 32))
+      async (mapFileToDoc) => {
+        const hovers = await take.hovers(mapFileToDoc['en.ftl'], new Position(1, 32))
 
         expect(hovers).toEqual(['foo'])
       })
@@ -44,8 +44,8 @@ describe('#Hover', () => {
           selector-interpolation = the { selector } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const hovers = await take.hovers(mapFileToUri['en.ftl'], new Position(6, 32))
+      async (mapFileToDoc) => {
+        const hovers = await take.hovers(mapFileToDoc['en.ftl'], new Position(6, 32))
 
         expect(hovers).toEqual(['you are at { $position -> ... } position'])
       })
@@ -58,8 +58,8 @@ describe('#Hover', () => {
           variable-interpolation = the { $var } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const hovers = await take.hovers(mapFileToUri['en.ftl'], new Position(0, 3))
+      async (mapFileToDoc) => {
+        const hovers = await take.hovers(mapFileToDoc['en.ftl'], new Position(0, 3))
 
         expect(hovers).toHaveLength(0)
       })

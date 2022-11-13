@@ -9,8 +9,8 @@ describe('#Definition', () => {
           message-interpolation = the { message } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const definitions = await take.definitions(mapFileToUri['en.ftl'], new Position(1, 32))
+      async (mapFileToDoc) => {
+        const definitions = await take.definitions(mapFileToDoc['en.ftl'], new Position(1, 32))
 
         expect(definitions).toHaveLength(1)
         expect(definitions[0]).toMatchObject({
@@ -29,8 +29,8 @@ describe('#Definition', () => {
           term-interpolation = the { -term } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const definitions = await take.definitions(mapFileToUri['en.ftl'], new Position(1, 32))
+      async (mapFileToDoc) => {
+        const definitions = await take.definitions(mapFileToDoc['en.ftl'], new Position(1, 32))
 
         expect(definitions).toHaveLength(1)
         expect(definitions[0]).toMatchObject({
@@ -48,8 +48,8 @@ describe('#Definition', () => {
           variable-interpolation = the { $var } interpolation
         `),
       }},
-      async (mapFileToUri) => {
-        const definitions = await take.definitions(mapFileToUri['en.ftl'], new Position(0, 3))
+      async (mapFileToDoc) => {
+        const definitions = await take.definitions(mapFileToDoc['en.ftl'], new Position(0, 3))
 
         expect(definitions).toHaveLength(0)
       })
