@@ -20,13 +20,13 @@ import { workspaceHasFtlFiles } from '../utils'
 const commandNameExtractStringToFluent = 'extractStringToFluent'
 
 const shouldDisplayCodeAction = async (selectedText: string) => {
-  const thereAreFtlFiles = await workspaceHasFtlFiles()
-  if (thereAreFtlFiles === false) {
+  const hasQuotesBordering = selectedText.match(/^(['"`]).*\1$/s)
+  if (hasQuotesBordering === null) {
     return false
   }
 
-  const hasQuotesBordering = selectedText.match(/^(['"`]).*\1$/s)
-  if (hasQuotesBordering === null) {
+  const thereAreFtlFiles = await workspaceHasFtlFiles()
+  if (thereAreFtlFiles === false) {
     return false
   }
 
