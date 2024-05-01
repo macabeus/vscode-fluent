@@ -14,6 +14,7 @@ type GlobalState = {
     groupComments: Array<{ name: string, start: number, end: number }>
     referenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
     junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
+    variables: { [messageIdentifier in string]: Array<string> }
   }
 }
 
@@ -104,8 +105,17 @@ const isTermOrMessageReference = (path: string, identifier: string, position: nu
   return identifierSpan.some(isInMessageRange)
 }
 
+const isMessageSpan = (path: string, identifier: string, position: number) => {
+  const idSpan = globalState[path].idSpan[identifier]
+  if (idSpan === undefined) {
+    return false
+  }
+
+  return (position >= idSpan.start) && (position <= idSpan.end)
+}
+
 const getGroupComments = (path: string) =>
-  globalState[path].groupComments
+  globalState[path]?.groupComments
 
 const getAllGroupComments = () =>
   Object
@@ -114,6 +124,9 @@ const getAllGroupComments = () =>
 
 const getJunksAnnotations = (path: string) =>
   globalState[path].junksAnnotations
+
+const getDeclaredVariables = (path: string, message: string) =>
+  globalState[path].variables[message]
 
 const getAssociatedFluentFilesByFilePath = (path: string) => {
   if (globalProjectsFtls.isMultipleProjectWorkspace === false) {
@@ -144,8 +157,10 @@ export {
   getMessageValueSpan,
   getMessageHover,
   isTermOrMessageReference,
+  isMessageSpan,
   getGroupComments,
   getAllGroupComments,
   getJunksAnnotations,
+  getDeclaredVariables,
   getAssociatedFluentFilesByFilePath,
 }
