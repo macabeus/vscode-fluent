@@ -7,6 +7,7 @@ import {
   Term,
   TermReference,
   Junk,
+  VariableReference,
 } from '@fluent/syntax'
 import buildHoverValue from './build-hover-value'
 
@@ -18,6 +19,8 @@ class VsCodeFluentVisitor extends Visitor {
   groupComments: Array<{ name: string, start: number, end: number }>
   referenceSpan: { [messageIdentifier in string]: Array<{ start: number, end: number }> }
   junksAnnotations: Array<{ code: string, message: string, start: number, end: number }>
+  variables: { [messageIdentifier in string]: Array<string> }
+  private currentMessage?: string
 
   constructor() {
     super()
@@ -28,6 +31,8 @@ class VsCodeFluentVisitor extends Visitor {
     this.groupComments = []
     this.referenceSpan = {}
     this.junksAnnotations = []
+    this.variables = {}
+    this.currentMessage = undefined
   }
 
   visitGroupComment(node: GroupComment) {
@@ -67,7 +72,9 @@ class VsCodeFluentVisitor extends Visitor {
       ? buildHoverValue(node.value.elements)
       : '[unknown]'
 
+    this.currentMessage = node.id.name
     this.genericVisit(node)
+    this.currentMessage = undefined
   }
 
   visitTermReference(node: TermReference) {
@@ -104,6 +111,22 @@ class VsCodeFluentVisitor extends Visitor {
       })
     })
   }
+
+  visitVariableReference(node: VariableReference): void {
+    if (this.currentMessage === undefined) {
+      return
+    }
+
+    if (this.variables[this.currentMessage] === undefined) {
+      this.variables[this.currentMessage] = []
+    }
+
+    if (this.variables[this.currentMessage].includes(node.id.name)) {
+      return
+    }
+
+    this.variables[this.currentMessage].push(node.id.name)
+  }
 }
 
 const fluentParser = new FluentParser()
@@ -122,6 +145,7 @@ const parser = (source: string) => {
     groupComments: visitorMessage.groupComments,
     referenceSpan: visitorMessage.referenceSpan,
     junksAnnotations: visitorMessage.junksAnnotations,
+    variables: visitorMessage.variables,
   }
 }
 
