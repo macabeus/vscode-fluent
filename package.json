@@ -2,7 +2,7 @@
   "name": "vscode-fluent",
   "displayName": "vscode-fluent",
   "description": "VS Code extension to work with Fluent, the correct-by-design l10n programming language",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "macabeus",
   "icon": "assets/logo.png",
   "repository": {
