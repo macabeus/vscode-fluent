@@ -115,7 +115,7 @@ const isMessageSpan = (path: string, identifier: string, position: number) => {
 }
 
 const getGroupComments = (path: string) =>
-  globalState[path]?.groupComments
+  globalState[path]?.groupComments ?? []
 
 const getAllGroupComments = () =>
   Object
